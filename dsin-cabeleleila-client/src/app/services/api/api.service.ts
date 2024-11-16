@@ -25,6 +25,8 @@ export class ApiService {
     password: string;
     phoneNumber: string;
   }) {
+    console.log('Aqui no services');
+    console.log(registerData);
     return this.http.post(
       `${ApiService.API_URL}/auth/register-user`,
       registerData

@@ -10,9 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
+  ngOnInit(): void {}
   // username = '';
 
   // constructor(private apiService: ApiService) {}

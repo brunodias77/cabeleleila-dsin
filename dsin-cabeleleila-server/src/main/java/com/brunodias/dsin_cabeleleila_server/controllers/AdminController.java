@@ -1,2 +1,4 @@
-package com.brunodias.dsin_cabeleleila_server.controllers;public class AdminController {
+package com.brunodias.dsin_cabeleleila_server.controllers;
+
+public class AdminController {
 }

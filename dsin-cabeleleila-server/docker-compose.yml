@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: dsin
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=dsin
+      - POSTGRES_PASSWORD=dsin
+      - POSTGRES_DB=dsin-cabeleleila

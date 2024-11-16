@@ -1,1 +1,74 @@
-<p>login works!</p>
+<section class="min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md p-6 space-y-6">
+    <a
+      href="#"
+      class="flex items-center justify-center mb-6 text-2xl text-white"
+    >
+      <img class="w-10 h-10 mr-2" src="assets/icons/scissors.svg" alt="logo" />
+      Cabeleleila Leila
+    </a>
+    <div
+      class="bg-[#0f232b] rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="p-6 space-y-4 md:space-y-6">
+        <h1
+          class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white"
+        >
+          Entre na sua conta
+        </h1>
+        <form class="space-y-4 md:space-y-6" (ngSubmit)="handleSubmit()">
+          <div>
+            <label for="email" class="block mb-2 text-sm font-medium text-white"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="name@company.com"
+              required=""
+              [(ngModel)]="formData.email"
+            />
+          </div>
+          <div>
+            <label
+              for="password"
+              class="block mb-2 text-sm font-medium text-white"
+              >Senha</label
+            >
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="••••••••"
+              class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              required=""
+              [(ngModel)]="formData.password"
+            />
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="isLoading"
+            class="w-full text-[#0b181e] bg-[#7AE186] border-0 py-2.5 px-4 focus:outline-none hover:bg-[#60b268] rounded-lg"
+          >
+            <ng-container *ngIf="!isLoading; else loadingTemplate">
+              Entrar
+            </ng-container>
+            <ng-template #loadingTemplate> Processando... </ng-template>
+          </button>
+          <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+            Ainda não tem uma conta?
+            <a
+              routerLink="/register"
+              class="font-medium text-[#7AE186] hover:underline dark:text-primary-500"
+              >Inscrever-se</a
+            >
+          </p>
+        </form>
+      </div>
+    </div>
+    <p class="text-red-400 text-center mt-10" *ngIf="message">{{ message }}</p>
+  </div>
+</section>
