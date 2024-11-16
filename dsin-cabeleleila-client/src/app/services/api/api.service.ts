@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 
 export interface RequestCreateAppointment {
-  serviceId: string;
+  serviceId: string[];
   appointmentDate: string;
 }
 
@@ -49,7 +49,7 @@ export class ApiService {
   }
 
   createAppointment(
-    request: RequestCreateAppointment[]
+    request: RequestCreateAppointment
   ): Observable<BaseResponseDTO> {
     const url = `${ApiService.API_URL}/appointment/create`;
     const headers = this.getAuthHeaders();

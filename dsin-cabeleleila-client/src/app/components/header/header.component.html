@@ -1,4 +1,4 @@
-<!-- <div class="w-full">
+<div class="w-full">
   <div
     class="max-w-screen-xl mx-auto flex items-center justify-between py-4 px-2"
   >
@@ -9,11 +9,17 @@
       <img class="w-6 h-6 mr-2" src="assets/icons/scissors.svg" alt="logo" />
       Cabeleleila Leila
     </a>
-    <nav>
+    <nav class="flex items-center justify-center gap-4">
       <ng-container *ngIf="username; else login">
         <a href="/profile" class="flex items-center justify-center gap-4">
           <img src="assets/icons/user.svg" alt="" />
           <span class="text-[#7AE186]">{{ username }}</span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="isAdmin">
+        <a href="/painel" class="flex items-center justify-center gap-4">
+          <img src="assets/icons/user.svg" alt="" />
+          <span class="text-[#7AE186]">Painel Administrativo</span>
         </a>
       </ng-container>
       <ng-template #login>
@@ -24,6 +30,4 @@
       </ng-template>
     </nav>
   </div>
-</div> -->
-
-<div class="text-white">Header</div>
+</div>

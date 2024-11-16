@@ -35,11 +35,12 @@ public class LoginUserUseCase implements ILoginUserUseCase{
         List<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority).toList();
-
+        System.out.println(roles.get(0).toString());
         return BaseResponseDTO.builder()
                 .status(200)
                 .message("Usuario logado com sucesso !")
                 .jwt(jwt)
+                .role(roles.get(0).toString())
                 .build();
     }
 }

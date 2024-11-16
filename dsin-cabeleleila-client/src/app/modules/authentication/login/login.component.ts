@@ -31,9 +31,8 @@ export class LoginComponent {
       const response: any = await firstValueFrom(
         this.apiService.loginUser(this.formData)
       );
-      console.log(response);
       if (response.status === 200) {
-        console.log('Deu baum');
+        console.log(response);
         this.showMessage('User Successfully logged in');
         localStorage.setItem('token', response.jwt);
         localStorage.setItem('role', response.role);

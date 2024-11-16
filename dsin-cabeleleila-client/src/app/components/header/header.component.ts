@@ -10,18 +10,22 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  ngOnInit(): void {}
-  // username = '';
+  username = '';
+  isAdmin = false;
+  constructor(private apiService: ApiService) {}
 
-  // constructor(private apiService: ApiService) {}
-
-  // ngOnInit(): void {
-  //   this.apiService.getUserDetails().subscribe((data) => {
-  //     if (data?.data?.name) {
-  //       this.username = data.data.name;
-  //       console.log('Verificando se o nome do usuário é exibido na tela: ');
-  //       console.log(data.data);
-  //     }
-  //   });
-  // }
+  ngOnInit(): void {
+    this.apiService.getUserDetails().subscribe((data) => {
+      var role = localStorage.getItem('role');
+      if (role === 'ROLE_ADMIN') {
+        console.log('Verificando se o usuário é um administrador: ');
+        this.isAdmin = true;
+      }
+      if (data?.data?.name) {
+        this.username = data.data.name;
+        console.log('Verificando se o nome do usuário é exibido na tela: ');
+        console.log(data.data);
+      }
+    });
+  }
 }
