@@ -1,0 +1,44 @@
+# Ignore node_modules para o cliente Angular
+dsin-cabeleleila-client/node_modules/
+
+# Ignore dist e build do Angular
+dsin-cabeleleila-client/dist/
+dsin-cabeleleila-client/build/
+
+# Ignore arquivos temporários e log do Angular
+dsin-cabeleleila-client/.angular/
+
+# Ignore dependências do Maven para o servidor Spring
+dsin-cabeleleila-server/target/
+
+# Ignore dependências do Gradle para o servidor Spring
+dsin-cabeleleila-server/.gradle/
+
+# Ignore IDEs, como IntelliJ IDEA e Eclipse
+.idea/
+.vscode/
+*.iml
+
+# Ignore arquivos de configuração de ambiente
+*.env
+
+# Ignore arquivos de log
+*.log
+
+# Ignore arquivos de backup do editor
+*~
+
+# Ignore a pasta de dependências do npm do cliente Angular
+dsin-cabeleleila-client/package-lock.json
+dsin-cabeleleila-client/yarn.lock
+
+# Ignore arquivos de configuração específicos de ferramentas de CI/CD
+*.local
+
+# Ignore arquivos do Docker
+*.dockerignore
+Dockerfile
+.docker/
+
+# Ignore a pasta de configuração do Spring Boot (não necessário para ambientes de produção)
+dsin-cabeleleila-server/.mvn/
