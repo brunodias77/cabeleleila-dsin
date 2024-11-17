@@ -1,4 +1,5 @@
 package com.brunodias.dsin_cabeleleila_server.controllers;
+
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestLoginUser;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestRegisterUser;
 import com.brunodias.dsin_cabeleleila_server.entities.User;
@@ -24,8 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Autenticação", description = "Controller de autenticacao de usuarios")
 public class AuthenticationController {
 
-    private final RegisterUserUseCase  _registerUserUseCase;
+    private final RegisterUserUseCase _registerUserUseCase;
     private final LoginUserUseCase _loginUserUseCase;
+
     @PostMapping("/register-user")
     @Operation(summary = "Cadastro de candidato", description = "Essa função é responsável por cadastrar um candidato")
     @ApiResponses({

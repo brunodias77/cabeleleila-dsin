@@ -173,7 +173,7 @@
     >
       <div class="bg-white p-6 rounded shadow-lg w-1/3">
         <h2 class="text-xl font-bold mb-4">Alterar Agendamento</h2>
-        <form (submit)="handleSubmit($event)">
+        <form (submit)="handleSubmitUpdate($event)">
           <div class="mb-4">
             <label for="date" class="block text-gray-700 font-bold mb-2"
               >Data:</label
@@ -186,6 +186,7 @@
               class="w-full border border-gray-300 rounded px-3 py-2"
               [min]="today"
               required
+              [(ngModel)]="appointmentUpdate!.appointmentDate"
             />
 
             <div class="mb-4">

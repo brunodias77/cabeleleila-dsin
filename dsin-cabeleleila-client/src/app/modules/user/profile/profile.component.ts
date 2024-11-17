@@ -5,28 +5,18 @@ import { ApiService } from '../../../services/api/api.service';
 import { firstValueFrom } from 'rxjs';
 import { startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 
-// Define o tipo do Serviço
 interface Service {
   id: string;
   serviceName: string;
   servicePrice: number;
 }
 
-// Define o tipo do Agendamento
 interface Appointment {
   id: string;
-  appointmentDate: string; // Pode ser Date, se você trabalhar diretamente com objetos Date
+  appointmentDate: string;
   status: string;
   services: Service[];
 }
-
-// interface Appointment {
-//   id: string;
-//   name: string;
-//   date: string;
-//   status: string;
-//   price: string;
-// }
 
 interface ServiceModal {
   id: string;
@@ -60,7 +50,6 @@ export class ProfileComponent implements OnInit {
     this.loadAppointments();
   }
 
-  // Carrega os serviços disponíveis
   loadServices(): void {
     this.isLoading = true;
     this.apiService.getDataServices().subscribe({
@@ -73,7 +62,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // Carrega os agendamentos do usuário
   loadAppointments(): void {
     this.apiService.getAllAppointments().subscribe({
       next: (appointments: Appointment[]) => {
@@ -83,7 +71,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // Abre o modal de agendamento
   openModal(): void {
     this.isOpen = true;
   }
@@ -96,13 +83,11 @@ export class ProfileComponent implements OnInit {
     this.modalUpdateAppointmentIsOpen = false;
   }
 
-  // Fecha o modal e limpa as opções selecionadas
   closeModal(): void {
     this.selectedOptions = [];
     this.isOpen = false;
   }
 
-  // Adiciona uma opção ao array de selecionados
   addOption(option: string | null): void {
     if (option) {
       this.selectedOptions.push(option);
@@ -110,25 +95,21 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // Retorna o nome do serviço baseado no ID
   getServiceName(optionId: string): string {
     const service = this.services.find((service) => service.id === optionId);
     return service ? service.name : 'Serviço não encontrado';
   }
 
-  // Remove uma opção da seleção
   removeOption(option: string): void {
     this.selectedOptions = this.selectedOptions.filter(
       (selected) => selected !== option
     );
   }
 
-  // Verifica se a opção foi selecionada
   isSelected(option: string): boolean {
     return this.selectedOptions.includes(option);
   }
 
-  // Verifica se o novo agendamento está na mesma semana de um agendamento existente
   isAppointmentInSameWeek(newDate: string): boolean {
     const newAppointmentDate = parseISO(newDate);
     const startOfNewWeek = startOfWeek(newAppointmentDate, { weekStartsOn: 1 });
@@ -143,7 +124,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // Deleta um agendamento, com restrição de antecedência de 2 dias
   deleteAppointment(appointment: Appointment): void {
     const appointmentDate = parseISO(appointment.appointmentDate);
     const today = new Date();
@@ -172,10 +152,24 @@ export class ProfileComponent implements OnInit {
   }
 
   updateAppointment(appointment: Appointment): void {
-    console.log('Entrei no updateAppointment');
-    console.log(appointment.id);
     this.appointmentUpdate = appointment;
     this.openUpdateAppointmentModal();
+  }
+
+  async handleSubmitUpdate(event: Event): Promise<void> {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    console.log('Entrei no handleSubmitUpdate');
+    console.log(this.appointmentUpdate);
+    const updatedAppointment = {
+      id: this.appointmentUpdate?.id,
+      appointmentDate: (event.target as HTMLFormElement)['date'].value,
+      services: this.selectedOptions.map((id) => ({
+        id: id,
+      })),
+    };
+    console.log('Depois');
+    console.log(updatedAppointment);
   }
 
   async handleSubmit(event: Event): Promise<void> {
