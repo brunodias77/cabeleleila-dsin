@@ -5,15 +5,30 @@ import { ApiService } from '../../../services/api/api.service';
 import { firstValueFrom } from 'rxjs';
 import { startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 
-interface Appointment {
+// Define o tipo do Serviço
+interface Service {
   id: string;
-  name: string;
-  date: string;
-  status: string;
-  price: string;
+  serviceName: string;
+  servicePrice: number;
 }
 
-interface Service {
+// Define o tipo do Agendamento
+interface Appointment {
+  id: string;
+  appointmentDate: string; // Pode ser Date, se você trabalhar diretamente com objetos Date
+  status: string;
+  services: Service[];
+}
+
+// interface Appointment {
+//   id: string;
+//   name: string;
+//   date: string;
+//   status: string;
+//   price: string;
+// }
+
+interface ServiceModal {
   id: string;
   name: string;
   price: number;
@@ -32,7 +47,7 @@ export class ProfileComponent implements OnInit {
   isLoading = false;
   searchText = '';
   selectedOptions: string[] = [];
-  services: Service[] = [];
+  services: ServiceModal[] = [];
   appointments: Appointment[] = [];
   today: string = new Date().toISOString().split('T')[0];
   newOption: string | null = null;
@@ -61,15 +76,8 @@ export class ProfileComponent implements OnInit {
   // Carrega os agendamentos do usuário
   loadAppointments(): void {
     this.apiService.getAllAppointments().subscribe({
-      next: (appointments) => {
-        this.appointments = appointments.map((appointment: any) => ({
-          id: appointment.id,
-          name: appointment.serviceName,
-          date: appointment.appointmentDateTime,
-          status: appointment.status,
-          price: `$${appointment.servicePrice}`,
-        }));
-        console.log('Agendamentos carregados:', this.appointments);
+      next: (appointments: Appointment[]) => {
+        this.appointments = appointments;
       },
       error: (err) => console.error('Erro ao carregar agendamentos:', err),
     });
@@ -127,7 +135,7 @@ export class ProfileComponent implements OnInit {
     const endOfNewWeek = endOfWeek(newAppointmentDate, { weekStartsOn: 1 });
 
     return this.appointments.some((appointment) => {
-      const appointmentDate = parseISO(appointment.date);
+      const appointmentDate = parseISO(appointment.appointmentDate);
       return isWithinInterval(appointmentDate, {
         start: startOfNewWeek,
         end: endOfNewWeek,
@@ -137,7 +145,7 @@ export class ProfileComponent implements OnInit {
 
   // Deleta um agendamento, com restrição de antecedência de 2 dias
   deleteAppointment(appointment: Appointment): void {
-    const appointmentDate = parseISO(appointment.date);
+    const appointmentDate = parseISO(appointment.appointmentDate);
     const today = new Date();
     const twoDaysBefore = new Date(appointmentDate);
     twoDaysBefore.setDate(appointmentDate.getDate() - 2);
@@ -203,7 +211,9 @@ export class ProfileComponent implements OnInit {
     } catch (error) {
       console.error('Erro ao agendar serviço:', error);
     } finally {
+      this.loadAppointments();
       this.isLoading = false;
+      this.closeModal();
     }
   }
 }

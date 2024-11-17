@@ -40,8 +40,12 @@
         </thead>
         <tbody class="text-gray-600 divide-y">
           <tr *ngFor="let appointment of appointments">
-            <td class="whitespace-nowrap">{{ appointment.name }}</td>
-            <td class="whitespace-nowrap">{{ appointment.date }}</td>
+            <td class="whitespace-nowrap">
+              <ng-container *ngFor="let service of appointment.services">
+                {{ service.serviceName }}
+              </ng-container>
+            </td>
+            <td class="whitespace-nowrap">{{ appointment.appointmentDate }}</td>
             <td class="whitespace-nowrap">
               <span
                 [ngClass]="{
@@ -53,7 +57,11 @@
                 {{ appointment.status }}
               </span>
             </td>
-            <td class="whitespace-nowrap">{{ appointment.price }}</td>
+            <td class="whitespace-nowrap">
+              <ng-container *ngFor="let service of appointment.services">
+                R$ {{ service.servicePrice }}
+              </ng-container>
+            </td>
             <td class="py-2 flex items-center justify-center gap-4">
               <button
                 class="px-2 py-1 bg-[#7AE186] rounded hover:brightness-75"
@@ -174,7 +182,7 @@
               id="date"
               type="date"
               name="date"
-              [value]="appointmentUpdate?.date || ''"
+              [value]="appointmentUpdate?.appointmentDate || ''"
               class="w-full border border-gray-300 rounded px-3 py-2"
               [min]="today"
               required
@@ -191,8 +199,13 @@
                 [(ngModel)]="appointmentUpdate"
               >
                 <option [value]="appointmentUpdate?.id" disabled selected>
-                  {{ appointmentUpdate?.name }} - R$
-                  {{ appointmentUpdate?.price }}
+                  <ng-container *ngIf="appointmentUpdate?.services?.length">
+                    <ng-container
+                      *ngFor="let service of appointmentUpdate?.services"
+                    >
+                      {{ service.serviceName }} - R$ {{ service.servicePrice }}
+                    </ng-container>
+                  </ng-container>
                 </option>
                 <option *ngFor="let service of services" [value]="service.id">
                   {{ service.name }} - R$ {{ service.price }}
