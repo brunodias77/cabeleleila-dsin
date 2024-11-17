@@ -1,0 +1,43 @@
+<table class="w-full table-auto text-sm text-center">
+  <thead class="text-gray-600 font-medium border-b">
+    <tr>
+      <th class="py-3">Nome</th>
+      <th class="py-3">Data</th>
+      <th class="py-3">Status</th>
+      <th class="py-3">Preço</th>
+      <th class="py-3">Ações</th>
+    </tr>
+  </thead>
+  <tbody class="text-gray-600 divide-y">
+    <tr *ngFor="let appointment of appointments">
+      <td class="whitespace-nowrap">
+        <ng-container *ngFor="let service of appointment.services">
+          {{ service.serviceName }}
+        </ng-container>
+      </td>
+      <td class="whitespace-nowrap">{{ appointment.appointmentDate }}</td>
+      <td class="whitespace-nowrap">
+        <span [ngClass]="statusClasses(appointment.status)">
+          {{ appointment.status }}
+        </span>
+      </td>
+      <td class="whitespace-nowrap">
+        <ng-container *ngFor="let service of appointment.services">
+          R$ {{ service.servicePrice }}
+        </ng-container>
+      </td>
+      <td class="py-2 flex items-center justify-center gap-4">
+        <app-button
+          label="Alterar"
+          color="success"
+          (click)="onUpdate.emit(appointment)"
+        ></app-button>
+        <app-button
+          label="Cancelar"
+          color="danger"
+          (click)="onDelete.emit(appointment)"
+        ></app-button>
+      </td>
+    </tr>
+  </tbody>
+</table>

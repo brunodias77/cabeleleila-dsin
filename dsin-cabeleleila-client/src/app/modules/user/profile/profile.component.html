@@ -9,99 +9,131 @@
           Acompanhe o historico de seus agendamentos na Cabeleleila Leila
         </p>
       </div>
-      <div class="mt-3 md:mt-0">
-        <button
-          (click)="openModal()"
-          class="bg-[#7AE186] text-[#0b181e] px-4 py-2 mt-4 rounded-lg hover:brightness-90"
-        >
-          Agendar um horário
-        </button>
-      </div>
+      <app-button
+        class="mt-3 md:mt-0"
+        (click)="openModal()"
+        label="Agendar um horário"
+        color="success"
+      ></app-button>
     </div>
-    <div
-      *ngIf="appointments.length === 0"
-      class="text-white h-screen flex items-center justify-center"
-    >
-      <span>Você ainda não possui agendamentos na Cabeleleila Leila</span>
-    </div>
-    <div
-      *ngIf="appointments.length > 0"
-      class="mt-12 relative h-max overflow-auto"
-    >
-      <table class="w-full table-auto text-sm text-center">
-        <thead class="text-gray-600 font-medium border-b">
-          <tr>
-            <th class="py-3">Nome</th>
-            <th class="py-3">Data</th>
-            <th class="py-3">Status</th>
-            <th class="py-3">Preço</th>
-            <th class="py-3">Alterar</th>
-          </tr>
-        </thead>
-        <tbody class="text-gray-600 divide-y">
-          <tr *ngFor="let appointment of appointments">
-            <td class="whitespace-nowrap">
-              <ng-container *ngFor="let service of appointment.services">
-                {{ service.serviceName }}
-              </ng-container>
-            </td>
-            <td class="whitespace-nowrap">{{ appointment.appointmentDate }}</td>
-            <td class="whitespace-nowrap">
-              <span
-                [ngClass]="{
-                  'px-3 py-2 rounded-full font-semibold text-xs': true,
-                  'text-green-600 bg-green-50': appointment.status === 'Active',
-                  'text-blue-600 bg-blue-50': appointment.status === 'Archived'
-                }"
-              >
-                {{ appointment.status }}
-              </span>
-            </td>
-            <td class="whitespace-nowrap">
-              <ng-container *ngFor="let service of appointment.services">
-                R$ {{ service.servicePrice }}
-              </ng-container>
-            </td>
-            <td class="py-2 flex items-center justify-center gap-4">
-              <button
-                class="px-2 py-1 bg-[#7AE186] rounded hover:brightness-75"
-                (click)="updateAppointment(appointment)"
-              >
-                Alterar Agedamento
-              </button>
-              <button
-                class="px-2 py-1 bg-red-600 rounded text-white hover:brightness-75"
-                (click)="deleteAppointment(appointment)"
-              >
-                Cancelar Agedamento
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!-- Modal  de agendamentos -->
-    <div
-      *ngIf="isOpen"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-    >
-      <div class="bg-white p-6 rounded shadow-lg w-1/3">
-        <h2 class="text-xl font-bold mb-4">Novo Agendamento</h2>
 
-        <form (submit)="handleSubmit($event)">
-          <div class="mb-4">
-            <label for="date" class="block text-gray-700 font-bold mb-2"
-              >Data:</label
+    <div class="mt-12">
+      <ng-container *ngIf="appointments.length; else emptyState">
+        <app-appointment-table
+          [appointments]="appointments"
+          (onUpdate)="updateAppointment($event)"
+          (onDelete)="deleteAppointment($event)"
+        ></app-appointment-table>
+      </ng-container>
+      <ng-template #emptyState>
+        <div class="text-white h-screen flex items-center justify-center">
+          <span>Você ainda não possui agendamentos na Cabeleleila Leila</span>
+        </div>
+      </ng-template>
+    </div>
+
+    <app-appointment-modal
+      *ngIf="isOpen"
+      [title]="'Novo Agendamento'"
+      (onClose)="closeModal()"
+    >
+      <form (submit)="handleSubmit($event)">
+        <div class="mb-4">
+          <label for="date" class="block text-gray-700 font-bold mb-2"
+            >Data:</label
+          >
+          <input
+            id="date"
+            type="date"
+            name="date"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            [min]="today"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="services" class="block text-gray-700 font-bold mb-2"
+            >Serviços:</label
+          >
+          <select
+            id="services"
+            name="services"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            [(ngModel)]="newOption"
+          >
+            <option *ngFor="let service of services" [value]="service.id">
+              {{ service.name }} - R$ {{ service.price }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+          (click)="addOption(newOption)"
+          [disabled]="!newOption"
+        >
+          Adicionar Serviço
+        </button>
+
+        <div class="mt-4">
+          <p *ngIf="selectedOptions.length > 0" class="font-bold mb-2">
+            Selecionados:
+          </p>
+          <div
+            *ngFor="let option of selectedOptions"
+            class="flex items-center mb-2"
+          >
+            <span class="mr-2">{{ getServiceName(option) }}</span>
+            <button
+              type="button"
+              class="text-red-500 hover:text-red-600 font-bold"
+              (click)="removeOption(option)"
             >
-            <input
-              id="date"
-              type="date"
-              name="date"
-              class="w-full border border-gray-300 rounded px-3 py-2"
-              [min]="today"
-              required
-            />
+              Remover
+            </button>
           </div>
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+            (click)="closeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Agendar
+          </button>
+        </div>
+      </form>
+    </app-appointment-modal>
+
+    <app-updated-appointment-modal
+      *ngIf="modalUpdateAppointmentIsOpen"
+      [title]="'Novo Agendamento'"
+      (onClose)="closeModal()"
+    >
+      <form (submit)="handleSubmitUpdate($event)">
+        <div class="mb-4">
+          <label for="date" class="block text-gray-700 font-bold mb-2"
+            >Data:</label
+          >
+          <input
+            id="date"
+            type="date"
+            name="date"
+            [value]="appointmentUpdate?.appointmentDate || ''"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            [min]="today"
+            required
+            [(ngModel)]="appointmentUpdate!.appointmentDate"
+          />
 
           <div class="mb-4">
             <label for="services" class="block text-gray-700 font-bold mb-2"
@@ -111,47 +143,28 @@
               id="services"
               name="services"
               class="w-full border border-gray-300 rounded px-3 py-2"
-              [(ngModel)]="newOption"
+              [(ngModel)]="appointmentUpdate"
             >
+              <option [value]="appointmentUpdate?.id" disabled selected>
+                <ng-container *ngIf="appointmentUpdate?.services?.length">
+                  <ng-container
+                    *ngFor="let service of appointmentUpdate?.services"
+                  >
+                    {{ service.serviceName }} - R$ {{ service.servicePrice }}
+                  </ng-container>
+                </ng-container>
+              </option>
               <option *ngFor="let service of services" [value]="service.id">
                 {{ service.name }} - R$ {{ service.price }}
               </option>
             </select>
           </div>
 
-          <button
-            type="button"
-            class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
-            (click)="addOption(newOption)"
-            [disabled]="!newOption"
-          >
-            Adicionar Serviço
-          </button>
-
-          <div class="mt-4">
-            <p *ngIf="selectedOptions.length > 0" class="font-bold mb-2">
-              Selecionados:
-            </p>
-            <div
-              *ngFor="let option of selectedOptions"
-              class="flex items-center mb-2"
-            >
-              <span class="mr-2">{{ getServiceName(option) }}</span>
-              <button
-                type="button"
-                class="text-red-500 hover:text-red-600 font-bold"
-                (click)="removeOption(option)"
-              >
-                Remover
-              </button>
-            </div>
-          </div>
-
           <div class="mt-6 flex justify-end space-x-4">
             <button
               type="button"
               class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-              (click)="closeModal()"
+              (click)="closeUpdateAppointmentModal()"
             >
               Cancelar
             </button>
@@ -159,79 +172,11 @@
               type="submit"
               class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             >
-              Agendar
+              Alterar
             </button>
           </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal de atualização de agendamento -->
-    <div
-      *ngIf="modalUpdateAppointmentIsOpen"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-    >
-      <div class="bg-white p-6 rounded shadow-lg w-1/3">
-        <h2 class="text-xl font-bold mb-4">Alterar Agendamento</h2>
-        <form (submit)="handleSubmitUpdate($event)">
-          <div class="mb-4">
-            <label for="date" class="block text-gray-700 font-bold mb-2"
-              >Data:</label
-            >
-            <input
-              id="date"
-              type="date"
-              name="date"
-              [value]="appointmentUpdate?.appointmentDate || ''"
-              class="w-full border border-gray-300 rounded px-3 py-2"
-              [min]="today"
-              required
-              [(ngModel)]="appointmentUpdate!.appointmentDate"
-            />
-
-            <div class="mb-4">
-              <label for="services" class="block text-gray-700 font-bold mb-2"
-                >Serviços:</label
-              >
-              <select
-                id="services"
-                name="services"
-                class="w-full border border-gray-300 rounded px-3 py-2"
-                [(ngModel)]="appointmentUpdate"
-              >
-                <option [value]="appointmentUpdate?.id" disabled selected>
-                  <ng-container *ngIf="appointmentUpdate?.services?.length">
-                    <ng-container
-                      *ngFor="let service of appointmentUpdate?.services"
-                    >
-                      {{ service.serviceName }} - R$ {{ service.servicePrice }}
-                    </ng-container>
-                  </ng-container>
-                </option>
-                <option *ngFor="let service of services" [value]="service.id">
-                  {{ service.name }} - R$ {{ service.price }}
-                </option>
-              </select>
-            </div>
-
-            <div class="mt-6 flex justify-end space-x-4">
-              <button
-                type="button"
-                class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                (click)="closeUpdateAppointmentModal()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-              >
-                Alterar
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      </form>
+    </app-updated-appointment-modal>
   </div>
 </section>
