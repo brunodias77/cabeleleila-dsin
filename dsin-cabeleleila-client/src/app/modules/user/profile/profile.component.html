@@ -113,5 +113,60 @@
         </div>
       </form>
     </app-appointment-modal>
+
+    <app-appointment-modal
+      *ngIf="modalUpdateAppointmentIsOpen"
+      [title]="'Alterar Item do Agendamento'"
+      (onClose)="closeModal()"
+    >
+      <form (submit)="handleUpdateSubmit($event)">
+        <div class="mb-4">
+          <label for="date" class="block text-gray-700 font-bold mb-2"
+            >Data:</label
+          >
+          <input
+            id="date"
+            type="date"
+            name="date"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            [min]="today"
+            [(ngModel)]="newDateAppointmentUpdate"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="services" class="block text-gray-700 font-bold mb-2"
+            >Serviços:</label
+          >
+          <select
+            id="services"
+            name="services"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            [(ngModel)]="newServiceIdAppointmentUpdate"
+          >
+            <option *ngFor="let service of services" [value]="service.id">
+              {{ service.name }} - R$ {{ service.price }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+            (click)="closeUpdateAppointmentModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Agendar
+          </button>
+        </div>
+      </form>
+    </app-appointment-modal>
   </div>
 </section>

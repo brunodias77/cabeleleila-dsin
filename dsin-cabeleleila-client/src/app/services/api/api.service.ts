@@ -1,22 +1,19 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-
-export interface RequestCreateAppointment {
-  serviceId: string[];
-  appointmentDate: string;
-}
-
-export interface BaseResponseDTO {
-  status: number;
-  message: string;
-}
+import { catchError, Observable, of, throwError } from 'rxjs';
+import {
+  Appointment,
+  BaseResponseDTO,
+  RequestCreateAppointment,
+  RequestUpadateAppointment,
+} from '../../types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
   private static readonly API_URL = 'http://localhost:8080';
+
   constructor(private http: HttpClient) {}
 
   registerUser(registerData: {
@@ -24,15 +21,17 @@ export class ApiService {
     email: string;
     password: string;
     phoneNumber: string;
-  }) {
-    console.log('Aqui no services');
-    console.log(registerData);
+  }): Observable<any> {
     return this.http.post(
       `${ApiService.API_URL}/auth/register-user`,
       registerData
     );
   }
-  loginUser(loginData: { username: string; password: string }) {
+
+  loginUser(loginData: {
+    username: string;
+    password: string;
+  }): Observable<any> {
     return this.http.post(`${ApiService.API_URL}/auth/login`, loginData);
   }
 
@@ -41,10 +40,7 @@ export class ApiService {
   }
 
   getAllAppointments(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+    const headers = this.getAuthHeaders();
     return this.http.get(`${ApiService.API_URL}/appointment/all`, { headers });
   }
 
@@ -59,32 +55,40 @@ export class ApiService {
   getUserDetails(): Observable<any> {
     const token = localStorage.getItem('token');
     if (!token) {
-      return new Observable((observer) => {
-        observer.next({});
-        observer.complete();
-      });
+      return of({}); // Return an empty observable when no token is available
     }
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+    const headers = this.getAuthHeaders();
     return this.http.get(`${ApiService.API_URL}/user`, { headers });
   }
 
   cancelAppointment(appointmentId: string): Observable<BaseResponseDTO> {
     const url = `${ApiService.API_URL}/appointment/cancel/${appointmentId}`;
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
+    const headers = this.getAuthHeaders();
     return this.http.put<BaseResponseDTO>(url, null, { headers });
+  }
+
+  updateAppointment(
+    appointmentId: string,
+    appointment: RequestUpadateAppointment
+  ): Observable<BaseResponseDTO> {
+    const url = `${ApiService.API_URL}/appointment/update/${appointmentId}`;
+    const headers = this.getAuthHeaders();
+    return this.http.put<BaseResponseDTO>(url, appointment, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error updating appointment:', error);
+        return throwError(() => new Error('Falha ao atualizar o compromisso.'));
+      })
+    );
   }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('No token found in localStorage.');
+    }
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : '',
     });
   }
 }

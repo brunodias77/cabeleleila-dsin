@@ -32,7 +32,6 @@ export class LoginComponent {
         this.apiService.loginUser(this.formData)
       );
       if (response.status === 200) {
-        console.log(response);
         this.showMessage('User Successfully logged in');
         localStorage.setItem('token', response.jwt);
         localStorage.setItem('role', response.role);

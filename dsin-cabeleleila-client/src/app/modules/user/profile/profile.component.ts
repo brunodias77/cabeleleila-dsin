@@ -15,7 +15,13 @@ import { ButtonComponent } from '../../../components/ui/button/button.component'
 import { AppointmentModalComponent } from '../../../components/appointment-modal/appointment-modal.component';
 import { UpdatedAppointmentModalComponent } from '../../../components/updated-appointment-modal/updated-appointment-modal.component';
 import { AppointmentTableComponent } from '../../../components/appointment-table/appointment-table.component';
-import { Service, Appointment, ServiceModal } from '../../../types';
+import {
+  Service,
+  Appointment,
+  ServiceModal,
+  RequestUpadateAppointment,
+  RequestCreateAppointment,
+} from '../../../types';
 import { CreateAppointmentFormComponent } from '../../../components/create-appointment-form/create-appointment-form.component';
 
 @Component({
@@ -44,18 +50,11 @@ export class ProfileComponent implements OnInit {
   appointments: Appointment[] = [];
   today = this.getTodayDate();
   newOption: string | null = null;
-  appointmentUpdate: Appointment | null = null;
-  updatedForm: FormGroup;
+  newServiceIdAppointmentUpdate: string = '';
+  newDateAppointmentUpdate: string = '';
+  newAppointmentIdUpdate: string = '';
 
-  constructor(private apiService: ApiService, private fb: FormBuilder) {
-    this.updatedForm = this.fb.group({
-      appointmentDate: [
-        this.appointmentUpdate?.appointmentDate,
-        Validators.required,
-      ],
-      services: [[], Validators.required],
-    });
-  }
+  constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initializeData();
@@ -65,7 +64,6 @@ export class ProfileComponent implements OnInit {
   private initializeData(): void {
     this.loadServices();
     this.loadAppointments();
-    console.log('Services', this.services);
   }
 
   private getTodayDate(): string {
@@ -146,31 +144,44 @@ export class ProfileComponent implements OnInit {
   }
 
   // Validação de agendamento
-  private isAppointmentInSameWeek(newDate: string): boolean {
+  private getAppointmentsInSameWeek(newDate: string): any[] {
     const newAppointmentDate = parseISO(newDate);
     const weekInterval = {
       start: startOfWeek(newAppointmentDate, { weekStartsOn: 1 }),
       end: endOfWeek(newAppointmentDate, { weekStartsOn: 1 }),
     };
 
-    return this.appointments.some((appointment) =>
+    // Filtra todos os agendamentos dentro da mesma semana
+    return this.appointments.filter((appointment) =>
       isWithinInterval(parseISO(appointment.appointmentDate), weekInterval)
     );
   }
-
   // Agendamento
   async handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
-    const date = (form.elements.namedItem('date') as HTMLInputElement).value;
+    var date = (form.elements.namedItem('date') as HTMLInputElement).value;
 
-    if (this.isAppointmentInSameWeek(date)) {
-      alert('Você já possui um agendamento marcado nesta semana.');
-      return;
+    const appointmentsInSameWeek = this.getAppointmentsInSameWeek(date);
+
+    if (appointmentsInSameWeek.length > 0) {
+      // Exibe o primeiro agendamento da semana
+      const firstAppointment = appointmentsInSameWeek[0];
+      var result = confirm(
+        `Você já possui um agendamento marcado nesta semana no dia, ${firstAppointment.appointmentDate} gostaria de marcar esse agendamento no mesmo dia?`
+      );
+      if (result) {
+        date = firstAppointment.appointmentDate;
+      } else {
+        return;
+      }
     }
 
     const serviceIds = this.selectedOptions;
-    const requestData = { serviceId: serviceIds, appointmentDate: date };
+    const requestData: RequestCreateAppointment = {
+      serviceId: serviceIds,
+      appointmentDate: date,
+    };
 
     await this.fetchWithLoading(
       () => firstValueFrom(this.apiService.createAppointment(requestData)),
@@ -184,35 +195,108 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelAppointment(appointment: Appointment): void {
-    console.log('Entrei no Cancelamento !');
+    const result = confirm('Deseja realmente cancelar o agendamento?');
+    if (result) {
+      const appointmentDate = parseISO(appointment.appointmentDate); // Converte a data do agendamento
+      const twoDaysBefore = new Date(appointmentDate);
+      twoDaysBefore.setDate(appointmentDate.getDate() - 2); // Subtrai 2 dias da data do agendamento
+
+      // Verifica se a data atual é maior que a data limite (2 dias antes do agendamento)
+      if (new Date() > twoDaysBefore) {
+        alert(
+          'Cancelamento de agendamento com menos de 2 dias de antecedência somente por telefone.'
+        );
+        return;
+      }
+
+      // Chama o serviço para cancelar o agendamento
+      this.fetchWithLoading(
+        () => firstValueFrom(this.apiService.cancelAppointment(appointment.id)),
+        () => {
+          this.loadAppointments(); // Recarrega a lista de agendamentos
+          alert('Agendamento cancelado com sucesso.');
+        },
+        () => alert('Erro ao cancelar o agendamento.')
+      );
+    } else {
+      return; // Se o usuário cancelar a confirmação, nada acontece
+    }
+  }
+
+  // cancelAppointment(appointment: Appointment): void {
+  //   var result = confirm('Deseja realmente cancelar o agendamento?');
+  //   if (result) {
+  //     const appointmentDate = parseISO(appointment.appointmentDate);
+  //     const twoDaysBefore = new Date(appointmentDate);
+  //     twoDaysBefore.setDate(appointmentDate.getDate() - 2);
+
+  //     if (new Date() > twoDaysBefore) {
+  //       alert(
+  //         'Cancelar de agendamento com menos de 2 dias de antecedência somente por telefone.'
+  //       );
+  //       return;
+  //     }
+
+  //     this.fetchWithLoading(
+  //       () => firstValueFrom(this.apiService.cancelAppointment(appointment.id)),
+  //       () => {
+  //         this.loadAppointments();
+  //         alert('Agendamento cancelado com sucesso.');
+  //       },
+  //       () => alert('Erro ao excluir o agendamento.')
+  //     );
+  //   } else {
+  //     return;
+  //   }
+  // }
+
+  updateAppointment(appointment: Appointment): void {
+    this.newServiceIdAppointmentUpdate = appointment.services[0].id;
+    this.newDateAppointmentUpdate = appointment.appointmentDate;
+    this.newAppointmentIdUpdate = appointment.id;
+
     const appointmentDate = parseISO(appointment.appointmentDate);
     const twoDaysBefore = new Date(appointmentDate);
     twoDaysBefore.setDate(appointmentDate.getDate() - 2);
 
-    if (new Date() > twoDaysBefore) {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (currentDate > twoDaysBefore) {
       alert(
-        'Cancelar de agendamento com menos de 2 dias de antecedência somente por telefone.'
+        'Alteração de agendamento com menos de 2 dias de antecedência somente por telefone.'
       );
       return;
     }
-    console.log('id', appointment.id);
 
-    this.fetchWithLoading(
-      () => firstValueFrom(this.apiService.cancelAppointment(appointment.id)),
-      () => {
-        this.loadAppointments();
-        alert('Agendamento cancelado com sucesso.');
-      },
-      () => alert('Erro ao excluir o agendamento.')
-    );
-  }
-
-  updateAppointment(appointment: Appointment): void {
-    this.appointmentUpdate = appointment;
+    // Abre o modal para editar o agendamento
     this.openUpdateAppointmentModal();
   }
 
   async handleUpdateSubmit(event: Event): Promise<void> {
     event.preventDefault();
+    const appointment: RequestUpadateAppointment = {
+      serviceId: [this.newServiceIdAppointmentUpdate],
+      appointmentDate: this.newDateAppointmentUpdate,
+    };
+
+    await this.fetchWithLoading(
+      () =>
+        firstValueFrom(
+          this.apiService.updateAppointment(
+            this.newAppointmentIdUpdate,
+            appointment
+          )
+        ),
+      () => {
+        alert('Agendamento atualizado com sucesso.');
+        this.loadAppointments();
+        this.closeUpdateAppointmentModal();
+      },
+      (err) => {
+        console.error('Erro ao atualizar agendamento:', err);
+        alert('Erro ao atualizar o agendamento.');
+      }
+    );
   }
 }
