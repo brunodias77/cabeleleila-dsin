@@ -18,13 +18,10 @@ export class HeaderComponent implements OnInit {
     this.apiService.getUserDetails().subscribe((data) => {
       var role = localStorage.getItem('role');
       if (role === 'ROLE_ADMIN') {
-        console.log('Verificando se o usuário é um administrador: ');
         this.isAdmin = true;
       }
       if (data?.data?.name) {
         this.username = data.data.name;
-        console.log('Verificando se o nome do usuário é exibido na tela: ');
-        console.log(data.data);
       }
     });
   }

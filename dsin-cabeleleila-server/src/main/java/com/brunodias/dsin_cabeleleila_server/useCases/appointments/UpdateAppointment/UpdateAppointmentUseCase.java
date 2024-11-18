@@ -31,12 +31,22 @@ public class UpdateAppointmentUseCase implements IUpdateAppointmentUseCase {
         Appointment appointment = _appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Agendamento não encontrado"));
 
-        LocalDate today = LocalDate.now();
-        if (!appointment.getAppointmentDate().isAfter(today.plusDays(2))) {
-            throw new AppointmentUpdateException("Agendamentos só podem ser alterados com pelo menos dois dias de antecedência");
-        }
+//        LocalDate today = LocalDate.now();
+//        if (!appointment.getAppointmentDate().isAfter(today.plusDays(2))) {
+//            throw new AppointmentUpdateException("Agendamentos só podem ser alterados com pelo menos dois dias de antecedência");
+//        }
 
         appointment.setAppointmentDate(request.getAppointmentDate());
+
+        Set<UUID> serviceIds = request.getServiceId();
+        if (serviceIds != null && !serviceIds.isEmpty()) {
+            Set<com.brunodias.dsin_cabeleleila_server.entities.Service> updatedServices = new HashSet<>(_serviceRepository.findAllById(serviceIds));
+
+            if (updatedServices.size() != serviceIds.size()) {
+                throw new AppointmentUpdateException("Alguns serviços não foram encontrados");
+            }
+            appointment.setServices(updatedServices);
+        }
 
 
         Appointment updatedAppointment = _appointmentRepository.save(appointment);
