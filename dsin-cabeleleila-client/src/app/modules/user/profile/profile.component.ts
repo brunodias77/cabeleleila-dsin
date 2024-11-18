@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  Form,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ApiService } from '../../../services/api/api.service';
 import { firstValueFrom } from 'rxjs';
 import { startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
@@ -9,6 +16,7 @@ import { AppointmentModalComponent } from '../../../components/appointment-modal
 import { UpdatedAppointmentModalComponent } from '../../../components/updated-appointment-modal/updated-appointment-modal.component';
 import { AppointmentTableComponent } from '../../../components/appointment-table/appointment-table.component';
 import { Service, Appointment, ServiceModal } from '../../../types';
+import { CreateAppointmentFormComponent } from '../../../components/create-appointment-form/create-appointment-form.component';
 
 @Component({
   selector: 'app-profile',
@@ -21,6 +29,7 @@ import { Service, Appointment, ServiceModal } from '../../../types';
     AppointmentModalComponent,
     UpdatedAppointmentModalComponent,
     AppointmentTableComponent,
+    CreateAppointmentFormComponent,
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
@@ -36,8 +45,17 @@ export class ProfileComponent implements OnInit {
   today = this.getTodayDate();
   newOption: string | null = null;
   appointmentUpdate: Appointment | null = null;
+  updatedForm: FormGroup;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private fb: FormBuilder) {
+    this.updatedForm = this.fb.group({
+      appointmentDate: [
+        this.appointmentUpdate?.appointmentDate,
+        Validators.required,
+      ],
+      services: [[], Validators.required],
+    });
+  }
 
   ngOnInit(): void {
     this.initializeData();
@@ -47,6 +65,7 @@ export class ProfileComponent implements OnInit {
   private initializeData(): void {
     this.loadServices();
     this.loadAppointments();
+    console.log('Services', this.services);
   }
 
   private getTodayDate(): string {
@@ -156,6 +175,7 @@ export class ProfileComponent implements OnInit {
     await this.fetchWithLoading(
       () => firstValueFrom(this.apiService.createAppointment(requestData)),
       () => {
+        alert('Agendamento realizado com sucesso.');
         this.loadAppointments();
         this.closeModal();
       },
@@ -163,7 +183,8 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  deleteAppointment(appointment: Appointment): void {
+  cancelAppointment(appointment: Appointment): void {
+    console.log('Entrei no Cancelamento !');
     const appointmentDate = parseISO(appointment.appointmentDate);
     const twoDaysBefore = new Date(appointmentDate);
     twoDaysBefore.setDate(appointmentDate.getDate() - 2);
@@ -174,10 +195,14 @@ export class ProfileComponent implements OnInit {
       );
       return;
     }
+    console.log('id', appointment.id);
 
     this.fetchWithLoading(
-      () => firstValueFrom(this.apiService.deleteAppointment(appointment.id)),
-      () => this.loadAppointments(),
+      () => firstValueFrom(this.apiService.cancelAppointment(appointment.id)),
+      () => {
+        this.loadAppointments();
+        alert('Agendamento cancelado com sucesso.');
+      },
       () => alert('Erro ao excluir o agendamento.')
     );
   }
@@ -187,15 +212,7 @@ export class ProfileComponent implements OnInit {
     this.openUpdateAppointmentModal();
   }
 
-  async handleSubmitUpdate(event: Event): Promise<void> {
+  async handleUpdateSubmit(event: Event): Promise<void> {
     event.preventDefault();
-    const updatedData = {
-      id: this.appointmentUpdate?.id,
-      appointmentDate: (event.target as HTMLFormElement)['date'].value,
-      services: this.selectedOptions.map((id) => ({ id })),
-    };
-
-    console.log('Atualizando:', updatedData);
-    // Implementar chamada ao serviço para atualizar o agendamento.
   }
 }

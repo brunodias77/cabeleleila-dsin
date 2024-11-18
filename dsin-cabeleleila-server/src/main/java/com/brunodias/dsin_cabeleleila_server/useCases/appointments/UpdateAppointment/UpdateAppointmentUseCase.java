@@ -38,13 +38,6 @@ public class UpdateAppointmentUseCase implements IUpdateAppointmentUseCase {
 
         appointment.setAppointmentDate(request.getAppointmentDate());
 
-        if (request.getServiceId() != null) {
-            com.brunodias.dsin_cabeleleila_server.entities.Service service = _serviceRepository.findById(request.getServiceId())
-                    .orElseThrow(() -> new IllegalArgumentException("Serviço com ID " + request.getServiceId() + " não encontrado"));
-            Set<com.brunodias.dsin_cabeleleila_server.entities.Service> services = new HashSet<>();
-            services.add(service);
-            appointment.setServices(services);
-        }
 
         Appointment updatedAppointment = _appointmentRepository.save(appointment);
 
@@ -53,5 +46,6 @@ public class UpdateAppointmentUseCase implements IUpdateAppointmentUseCase {
                 .message("Agendamento atualizado com sucesso")
                 .data(updatedAppointment)
                 .build();
+
     }
 }

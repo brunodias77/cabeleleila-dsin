@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Appointment } from '../../types';
-import { ButtonComponent } from "../ui/button/button.component";
+import { ButtonComponent } from '../ui/button/button.component';
 
 @Component({
   selector: 'app-appointment-table',
@@ -18,10 +18,10 @@ export class AppointmentTableComponent {
   statusClasses(status: string) {
     return (
       {
-        Active:
+        AGENDADO:
           'text-green-600 bg-green-50 px-3 py-2 rounded-full font-semibold text-xs',
-        Archived:
-          'text-blue-600 bg-blue-50 px-3 py-2 rounded-full font-semibold text-xs',
+        CANCELADO:
+          'text-red-600 bg-red-50 px-3 py-2 rounded-full font-semibold text-xs',
       }[status] || ''
     );
   }

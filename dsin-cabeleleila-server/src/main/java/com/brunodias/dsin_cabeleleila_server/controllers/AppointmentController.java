@@ -7,6 +7,7 @@ import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestCreateAppointm
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestUpdateAppointment;
 import com.brunodias.dsin_cabeleleila_server.useCases.appointments.GetAllUserAppointment.GetAllUserAppointmentUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.appointments.UpdateAppointment.UpdateAppointmentUseCase;
+import com.brunodias.dsin_cabeleleila_server.useCases.appointments.cancelAppointment.CancelAppointmentUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.appointments.createAppointment.CreateAppointmentUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +35,7 @@ public class AppointmentController {
     private final GetAllUserAppointmentUseCase _getAllUserAppointmentUseCase;
     private final UpdateAppointmentUseCase _updateAppointmentUseCase;
     private final CreateAppointmentUseCase _createAppointmentUseCase;
+    private final CancelAppointmentUseCase _cancelAppointmentUseCase;
 
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
@@ -76,7 +78,7 @@ public class AppointmentController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Atualizar Agendamento", description = "Rota para atualizar um agendamento existente pelo ID. O usuário deve estar logado.")
     @ApiResponses({
@@ -97,4 +99,27 @@ public class AppointmentController {
                     .build());
         }
     }
+
+    @PutMapping("/cancel/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Cancelar Agendamento", description = "Rota para cancelar um agendamento existente pelo ID. O usuário deve estar logado.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Agendamento cancelado com sucesso", content = {
+                    @Content(schema = @Schema(implementation = BaseResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Erro de validação ao cancelar o agendamento"),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado")
+    })
+    public ResponseEntity<BaseResponseDTO> cancelAppointment(@PathVariable UUID id) {
+        try {
+            var result = this._cancelAppointmentUseCase.execute(id);
+            return ResponseEntity.status(200).body(result);
+        } catch (Exception err) {
+            return ResponseEntity.status(400).body(BaseResponseDTO.builder()
+                    .status(400)
+                    .message(err.getMessage())
+                    .build());
+        }
+    }
+
 }

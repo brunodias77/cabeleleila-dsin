@@ -1,0 +1,62 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+  <!-- Campo Data -->
+  <div>
+    <label for="date" class="block text-gray-700 font-semibold">Data</label>
+    <input
+      id="date"
+      type="date"
+      formControlName="date"
+      class="w-full border rounded px-3 py-2"
+    />
+    <span
+      *ngIf="form.get('date')?.touched && form.get('date')?.invalid"
+      class="text-red-500 text-sm"
+    >
+      A data é obrigatória.
+    </span>
+  </div>
+
+  <!-- Campo Serviços -->
+  <div>
+    <label for="services" class="block text-gray-700 font-semibold"
+      >Serviços</label
+    >
+    <select
+      id="services"
+      formControlName="selectedServices"
+      multiple
+      class="w-full border rounded px-3 py-2"
+    >
+      <option *ngFor="let service of services" [value]="service.id">
+        {{ service.name }} - R$ {{ service.price }}
+      </option>
+    </select>
+    <span
+      *ngIf="
+        form.get('selectedServices')?.touched &&
+        form.get('selectedServices')?.invalid
+      "
+      class="text-red-500 text-sm"
+    >
+      Selecione pelo menos um serviço.
+    </span>
+  </div>
+
+  <!-- Botões -->
+  <div class="flex justify-end space-x-4">
+    <button
+      type="button"
+      class="bg-gray-500 text-white px-4 py-2 rounded"
+      (click)="onCancel()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      class="bg-blue-500 text-white px-4 py-2 rounded"
+      [disabled]="form.invalid"
+    >
+      Salvar
+    </button>
+  </div>
+</form>

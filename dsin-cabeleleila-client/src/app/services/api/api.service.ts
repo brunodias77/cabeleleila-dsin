@@ -70,10 +70,14 @@ export class ApiService {
     return this.http.get(`${ApiService.API_URL}/user`, { headers });
   }
 
-  deleteAppointment(appointmentId: string): Observable<BaseResponseDTO> {
-    const url = `${ApiService.API_URL}/appointment/delete/${appointmentId}`;
-    const headers = this.getAuthHeaders();
-    return this.http.delete<BaseResponseDTO>(url, { headers });
+  cancelAppointment(appointmentId: string): Observable<BaseResponseDTO> {
+    const url = `${ApiService.API_URL}/appointment/cancel/${appointmentId}`;
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.put<BaseResponseDTO>(url, null, { headers });
   }
 
   private getAuthHeaders(): HttpHeaders {

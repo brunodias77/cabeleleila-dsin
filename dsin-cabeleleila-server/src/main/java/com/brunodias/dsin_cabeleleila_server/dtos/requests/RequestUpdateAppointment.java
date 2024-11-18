@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -24,5 +26,5 @@ public class RequestUpdateAppointment {
 
     @NotNull(message = "A lista de serviços não pode estar vazia.")
     @NotEmpty(message = "É necessário selecionar ao menos um serviço.")
-    private UUID serviceId;
+    private Set<UUID> serviceId;
 }
