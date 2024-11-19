@@ -91,4 +91,11 @@ export class ApiService {
       Authorization: token ? `Bearer ${token}` : '',
     });
   }
+
+  getPerformaceData(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${ApiService.API_URL}/admin/performace`, {
+      headers,
+    });
+  }
 }

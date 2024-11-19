@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.apiService.getUserDetails().subscribe((data) => {
+      console.log(data);
       var role = localStorage.getItem('role');
       if (role === 'ROLE_ADMIN') {
         this.isAdmin = true;
@@ -24,5 +25,10 @@ export class HeaderComponent implements OnInit {
         this.username = data.data.name;
       }
     });
+  }
+
+  logout() {
+    localStorage.clear();
+    window.location.href = '/login';
   }
 }

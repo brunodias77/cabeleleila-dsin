@@ -1,13 +1,38 @@
 <section id="profile" class="w-full h-screen">
   <div class="max-w-screen-xl mx-auto text-center">
     <div class="w-full items-start justify-between md:flex">
-      <div class="max-w-lg">
+      <div class="max-w-7xl">
         <h3 class="text-white text-xl font-bold sm:text-2xl">
           Seus Agendamentos
         </h3>
         <p class="text-gray-400 mt-2">
           Acompanhe o historico de seus agendamentos na Cabeleleila Leila
         </p>
+        <!-- Filtro de datas -->
+        <div class="mt-8">
+          <label for="startDate" class="text-gray-700">Data Início: </label>
+          <input
+            type="date"
+            id="startDate"
+            [(ngModel)]="startDateFilterAppointments"
+            class="border border-gray-300 rounded px-2 py-1 ml-2"
+          />
+
+          <label for="endDate" class="ml-4 text-gray-700">Data Fim: </label>
+          <input
+            type="date"
+            id="endDate"
+            [(ngModel)]="endDateFilterAppointments"
+            class="border border-gray-300 rounded px-2 py-1 ml-2"
+          />
+
+          <button
+            (click)="filterAppointments()"
+            class="ml-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Filtrar
+          </button>
+        </div>
       </div>
       <app-button
         class="mt-3 md:mt-0"
@@ -18,13 +43,24 @@
     </div>
 
     <div class="mt-12">
-      <ng-container *ngIf="appointments.length; else emptyState">
+      <ng-container *ngIf="filteredAppointments.length; else showAppointments">
         <app-appointment-table
-          [appointments]="appointments"
+          [appointments]="filteredAppointments"
           (onUpdate)="updateAppointment($event)"
           (onDelete)="cancelAppointment($event)"
         ></app-appointment-table>
       </ng-container>
+
+      <ng-template #showAppointments>
+        <ng-container *ngIf="appointments.length; else emptyState">
+          <app-appointment-table
+            [appointments]="appointments"
+            (onUpdate)="updateAppointment($event)"
+            (onDelete)="cancelAppointment($event)"
+          ></app-appointment-table>
+        </ng-container>
+      </ng-template>
+
       <ng-template #emptyState>
         <div class="text-white h-screen flex items-center justify-center">
           <span>Você ainda não possui agendamentos na Cabeleleila Leila</span>
@@ -254,7 +290,7 @@
                 value="10:00"
                 class="hidden peer"
                 name="timetable"
-                [(ngModel)]="selectedTime"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
               />
               <label
                 for="10-am"
@@ -271,7 +307,7 @@
                 value="11:00"
                 class="hidden peer"
                 name="timetable"
-                [(ngModel)]="selectedTime"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
               />
               <label
                 for="11-am"
@@ -289,7 +325,7 @@
                 class="hidden peer"
                 name="timetable"
                 checked
-                [(ngModel)]="selectedTime"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
               />
               <label
                 for="12-am"
@@ -306,7 +342,7 @@
                 value="14:00"
                 class="hidden peer"
                 name="timetable"
-                [(ngModel)]="selectedTime"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
               />
               <label
                 for="2-pm"
@@ -323,7 +359,7 @@
                 value="15:00"
                 class="hidden peer"
                 name="timetable"
-                [(ngModel)]="selectedTime"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
               />
               <label
                 for="3-pm"
@@ -340,7 +376,7 @@
                 value="16:00"
                 class="hidden peer"
                 name="timetable"
-                [(ngModel)]="selectedTime"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
               />
               <label
                 for="4-pm"

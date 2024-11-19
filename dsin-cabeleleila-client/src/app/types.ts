@@ -26,10 +26,16 @@ export interface RequestCreateAppointment {
 
 export interface RequestUpadateAppointment {
   serviceId: string[];
+  appointmentTime: string;
   appointmentDate: string;
 }
 
 export interface BaseResponseDTO {
   status: number;
   message: string;
+}
+export interface WeeklyPerformance {
+  totalScheduledServices: number;
+  totalCancelledServices: number;
+  totalRevenue: number;
 }

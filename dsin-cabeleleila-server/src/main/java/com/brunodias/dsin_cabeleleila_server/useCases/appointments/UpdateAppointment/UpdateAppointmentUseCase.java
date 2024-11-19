@@ -6,6 +6,7 @@ import com.brunodias.dsin_cabeleleila_server.entities.Appointment;
 import com.brunodias.dsin_cabeleleila_server.enums.AppointmentStatus;
 import com.brunodias.dsin_cabeleleila_server.exceptions.AppointmentNotFound;
 import com.brunodias.dsin_cabeleleila_server.exceptions.AppointmentUpdateException;
+import com.brunodias.dsin_cabeleleila_server.mappers.EntityToDtoMapper;
 import com.brunodias.dsin_cabeleleila_server.repositories.AppointmentRepository;
 import com.brunodias.dsin_cabeleleila_server.repositories.ServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,16 @@ public class UpdateAppointmentUseCase implements IUpdateAppointmentUseCase {
     @Transactional
     @Override
     public BaseResponseDTO execute(UUID id, RequestUpdateAppointment request) {
+
         Appointment appointment = _appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Agendamento não encontrado"));
 
-//        LocalDate today = LocalDate.now();
-//        if (!appointment.getAppointmentDate().isAfter(today.plusDays(2))) {
-//            throw new AppointmentUpdateException("Agendamentos só podem ser alterados com pelo menos dois dias de antecedência");
-//        }
+        // Ver a questao de 2 dias
+
+        // Verificar se o AppointmentStatus e igual a AGENDADO
 
         appointment.setAppointmentDate(request.getAppointmentDate());
+        appointment.setAppointmentTime(request.getAppointmentTime());
 
         Set<UUID> serviceIds = request.getServiceId();
         if (serviceIds != null && !serviceIds.isEmpty()) {
@@ -50,11 +52,12 @@ public class UpdateAppointmentUseCase implements IUpdateAppointmentUseCase {
 
 
         Appointment updatedAppointment = _appointmentRepository.save(appointment);
+        var updateAppointmentDTO = EntityToDtoMapper.mapAppointmentToDtoBasic(updatedAppointment);
 
         return BaseResponseDTO.builder()
                 .status(200)
                 .message("Agendamento atualizado com sucesso")
-                .data(updatedAppointment)
+                .data(updateAppointmentDTO)
                 .build();
 
     }

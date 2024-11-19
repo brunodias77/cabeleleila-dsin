@@ -50,12 +50,16 @@ export class ProfileComponent implements OnInit {
   newOption: string | null = null;
   newServiceIdAppointmentUpdate: string = '';
   newDateAppointmentUpdate: string = '';
+  newSelectedTimeAppointmentUpdate: string = '';
   newAppointmentIdUpdate: string = '';
   selectedTime: string = '12:00 AM';
   showAlert = false;
   alertMessage = '';
   alertResponse: boolean = false;
-  AppointmentsInSameWeek: Appointment[] = [];
+  filteredAppointments: Appointment[] = [];
+  startDateFilterAppointments: string = '';
+  endDateFilterAppointments: string = '';
+
   constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -75,6 +79,18 @@ export class ProfileComponent implements OnInit {
   cancelAlert() {
     this.alertResponse = false;
     this.showAlert = false;
+  }
+
+  filterAppointments() {
+    if (this.startDateFilterAppointments && this.endDateFilterAppointments) {
+      const start = new Date(this.startDateFilterAppointments);
+      const end = new Date(this.endDateFilterAppointments);
+      this.filteredAppointments = this.appointments.filter((appointment) => {
+        const appointmentDate = new Date(appointment.appointmentDate);
+        return appointmentDate >= start && appointmentDate <= end;
+      });
+      console.log('filteredAppointments', this.filteredAppointments);
+    }
   }
 
   private getTodayDate(): string {
@@ -194,6 +210,23 @@ export class ProfileComponent implements OnInit {
           },
           () => alert('Erro ao agendar serviço.')
         );
+      } else {
+        const serviceIds = this.selectedOptions;
+        const requestData: RequestCreateAppointment = {
+          serviceId: serviceIds,
+          appointmentDate: date,
+          appointmentTime: this.selectedTime,
+        };
+
+        await this.fetchWithLoading(
+          () => firstValueFrom(this.apiService.createAppointment(requestData)),
+          () => {
+            alert('Agendamento realizado com sucesso.');
+            this.loadAppointments();
+            this.closeModal();
+          },
+          () => alert('Erro ao agendar serviço.')
+        );
       }
     } else {
       const serviceIds = this.selectedOptions;
@@ -262,7 +295,6 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // Abre o modal para editar o agendamento
     this.openUpdateAppointmentModal();
   }
 
@@ -271,7 +303,12 @@ export class ProfileComponent implements OnInit {
     const appointment: RequestUpadateAppointment = {
       serviceId: [this.newServiceIdAppointmentUpdate],
       appointmentDate: this.newDateAppointmentUpdate,
+      appointmentTime: this.newSelectedTimeAppointmentUpdate,
     };
+
+    console.log('Tentando fazer o update');
+    console.log('appointment', appointment);
+    console.log('newAppointmentIdUpdate', this.newAppointmentIdUpdate);
 
     await this.fetchWithLoading(
       () =>

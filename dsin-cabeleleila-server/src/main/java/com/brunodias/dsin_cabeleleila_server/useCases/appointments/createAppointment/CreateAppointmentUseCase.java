@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,11 +36,18 @@ public class CreateAppointmentUseCase implements ICreateAppointmentUseCase{
 
         var user = _userService.getLoginUser();
 
+        boolean appointmentExists = _appointmentRepository.existsByAppointmentDateAndAppointmentTime(request.appointmentDate(), request.appointmentTime());
+        if (appointmentExists) {
+            return BaseResponseDTO.builder()
+                    .status(400)
+                    .message("Já existe um agendamento para essa data e hora. Por favor, escolha outro horário.")
+                    .build();
+        }
+
         Set<com.brunodias.dsin_cabeleleila_server.entities.Service> services = request.serviceId().stream()
                 .map(id -> _serviceRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException("Serviço com ID " + id + " não encontrado")))
                 .collect(Collectors.toSet());
-
 
         Appointment appointment = Appointment.builder()
                 .appointmentDate(request.appointmentDate())
@@ -48,72 +56,10 @@ public class CreateAppointmentUseCase implements ICreateAppointmentUseCase{
                 .client(user)
                 .services(services)
                 .build();
+
         var appointmentSaved = _appointmentRepository.save(appointment);
+        var appointmentDTO = EntityToDtoMapper.mapAppointmentToDtoBasic(appointmentSaved);
+        return BaseResponseDTO.builder().status(201).data(appointmentDTO).build();
 
-        return BaseResponseDTO.builder().status(201).data(appointmentSaved).build();
-
-
-
-
-
-//        List<com.brunodias.dsin_cabeleleila_server.entities.Service> services = request.serviceId().stream()
-//                .map(serviceId -> _serviceRepository.findById(serviceId)
-//                        .orElseThrow(() -> new ResourceNotFoundException()))
-//                .toList();
-//
-//        LocalDate appointmentDate = request.appointmentDate();
-//        if (appointmentDate.isBefore(LocalDate.now())) {
-//            return BaseResponseDTO.builder().message("Não é possível agendar para uma data passada.").build();
-//        }
-//
-//        var user = _userService.getLoginUser();
-//
-//        Appointment appointment = Appointment.builder()
-//                .status(AppointmentStatus.AGENDADO)
-//                .appointmentDate(appointmentDate)
-//                .client(user)
-//                .services(new HashSet<>()) // Inicializa o HashSet
-//                .build();
-//
-//        services.forEach(appointment.getServices()::add);
-//
-//        Appointment savedAppointment = _appointmentRepository.save(appointment);
-//
-//        var appointmentDTO = EntityToDtoMapper.mapAppointmentToDtoBasic(savedAppointment);
-//
-//        return BaseResponseDTO.builder()
-//                .status(201)
-//                .message("Agendamento feito com sucesso!")
-//                .data(appointmentDTO)
-//                .build();
     }
-
-
-//    @Override
-//    public BaseResponseDTO execute(RequestCreateAppointment request) {
-//        List<com.brunodias.dsin_cabeleleila_server.entities.Service> services = _serviceRepository.findAllById(request.serviceId());
-//        if (services.size() != request.serviceId().size()) {
-//            throw new ResourceNotFoundException();
-//        }
-//
-//        LocalDate appointmentDate = request.appointmentDate();
-//        if (appointmentDate.isBefore(LocalDate.now())) {
-//            return BaseResponseDTO.builder().message("Não é possível agendar para uma data passada.").build();
-//        }
-//
-//
-//
-//        var user = _userService.getLoginUser();
-//        Appointment appointment = Appointment.builder()
-//                .status(AppointmentStatus.AGENDADO)
-//                .appointmentDate(request.appointmentDate())
-//                .client(user)
-//                .services(new HashSet<>())
-//                .build();
-//        services.forEach(service -> appointment.getServices().add(service));
-//        Appointment savedAppointment = _appointmentRepository.save(appointment);
-//        var appointmentDTO = EntityToDtoMapper.mapAppointmentToDtoBasic(savedAppointment);
-//
-//        return BaseResponseDTO.builder().status(201).message("Agendamento feito com sucesso !").data(appointmentDTO).build();
-//    }
 }

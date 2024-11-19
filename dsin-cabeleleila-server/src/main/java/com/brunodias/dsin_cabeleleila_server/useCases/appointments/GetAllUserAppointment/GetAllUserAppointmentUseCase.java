@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,20 +29,24 @@ public class GetAllUserAppointmentUseCase implements IGetAllUserAppointmentUseCa
     }
 
     private AppointmentDetailsDTO mapToAppointmentDetailsDTO(Object[] result) {
-        UUID id = (UUID) result[1];  // Corrigido para UUID
+        UUID id = (UUID) result[2];  // Corrigido para UUID
         LocalDate appointmentDate = (LocalDate) result[0];
-        AppointmentStatus status = (AppointmentStatus) result[2];
-        String serviceName = (String) result[3];
-        double servicePrice = (double) result[4];
+        LocalTime appointmentTime = (LocalTime) result[1];
+        AppointmentStatus status = (AppointmentStatus) result[3];
+        String serviceName = (String) result[4];
+        double servicePrice = (double) result[5];
 
         boolean isInThePast = appointmentDate.isBefore(LocalDate.now());
 
         if (isInThePast) {
             System.out.println("Este agendamento já está no passado: " + appointmentDate);
         }
+
         ServiceDTO serviceDTO = new ServiceDTO(serviceName, servicePrice);
         List<ServiceDTO> services = List.of(serviceDTO);
-        return new AppointmentDetailsDTO(id, appointmentDate, status, services);
+
+        // Passando a hora junto com a data
+        return new AppointmentDetailsDTO(id, appointmentDate, appointmentTime, status, services);
     }
 
 }

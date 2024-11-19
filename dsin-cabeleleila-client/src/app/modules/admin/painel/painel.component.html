@@ -1,1 +1,28 @@
-<p>painel works!</p>
+<section id="panel-admin" class="w-full h-screen">
+  <div class="max-w-screen-xl mx-auto text-center grid grid-cols-3 gap-32">
+    <div
+      class="p-5 rounded-xl bg-green-500 flex flex-col items-center justify-center"
+    >
+      <span class="">Total de Serviços Agendados</span>
+      <span class="text-xl font-bold">{{
+        WeeklyPerformance?.totalScheduledServices
+      }}</span>
+    </div>
+    <div
+      class="p-5 rounded-xl bg-red-500 flex flex-col items-center justify-center"
+    >
+      <span class="">Total de Serviços Cancelados</span>
+      <span class="text-xl font-bold">{{
+        WeeklyPerformance?.totalCancelledServices
+      }}</span>
+    </div>
+    <div
+      class="p-5 rounded-xl bg-green-500 flex flex-col items-center justify-center"
+    >
+      <span class="">Projecao de lucro semanal</span>
+      <span class="text-xl font-bold">
+        R$ {{ WeeklyPerformance?.totalRevenue }}</span
+      >
+    </div>
+  </div>
+</section>
