@@ -7,6 +7,7 @@ export interface Service {
 export interface Appointment {
   id: string;
   appointmentDate: string;
+  appointmentTime: string;
   status: string;
   services: Service[];
 }
@@ -20,6 +21,7 @@ export interface ServiceModal {
 export interface RequestCreateAppointment {
   serviceId: string[];
   appointmentDate: string;
+  appointmentTime: string;
 }
 
 export interface RequestUpadateAppointment {

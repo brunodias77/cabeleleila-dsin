@@ -13,8 +13,8 @@ import { firstValueFrom } from 'rxjs';
 import { startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { ButtonComponent } from '../../../components/ui/button/button.component';
 import { AppointmentModalComponent } from '../../../components/appointment-modal/appointment-modal.component';
-import { UpdatedAppointmentModalComponent } from '../../../components/updated-appointment-modal/updated-appointment-modal.component';
 import { AppointmentTableComponent } from '../../../components/appointment-table/appointment-table.component';
+import { CreateAppointmentFormComponent } from '../../../components/create-appointment-form/create-appointment-form.component';
 import {
   Service,
   Appointment,
@@ -22,7 +22,6 @@ import {
   RequestUpadateAppointment,
   RequestCreateAppointment,
 } from '../../../types';
-import { CreateAppointmentFormComponent } from '../../../components/create-appointment-form/create-appointment-form.component';
 
 @Component({
   selector: 'app-profile',
@@ -33,7 +32,6 @@ import { CreateAppointmentFormComponent } from '../../../components/create-appoi
     ReactiveFormsModule,
     ButtonComponent,
     AppointmentModalComponent,
-    UpdatedAppointmentModalComponent,
     AppointmentTableComponent,
     CreateAppointmentFormComponent,
   ],
@@ -53,17 +51,30 @@ export class ProfileComponent implements OnInit {
   newServiceIdAppointmentUpdate: string = '';
   newDateAppointmentUpdate: string = '';
   newAppointmentIdUpdate: string = '';
-
+  selectedTime: string = '12:00 AM';
+  showAlert = false;
+  alertMessage = '';
+  alertResponse: boolean = false;
+  AppointmentsInSameWeek: Appointment[] = [];
   constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initializeData();
   }
 
-  // Métodos principais
   private initializeData(): void {
     this.loadServices();
     this.loadAppointments();
+  }
+
+  confirmAlert() {
+    this.alertResponse = true;
+    this.showAlert = false;
+    this.closeModal();
+  }
+  cancelAlert() {
+    this.alertResponse = false;
+    this.showAlert = false;
   }
 
   private getTodayDate(): string {
@@ -87,7 +98,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // Serviços
   private loadServices(): void {
     this.apiService.getDataServices().subscribe({
       next: (response) => (this.services = response.data),
@@ -102,7 +112,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // Modal
   openModal(): void {
     this.isOpen = true;
   }
@@ -120,7 +129,6 @@ export class ProfileComponent implements OnInit {
     this.modalUpdateAppointmentIsOpen = false;
   }
 
-  // Manipulação de opções
   addOption(option: string | null): void {
     if (option) {
       this.selectedOptions.push(option);
@@ -143,63 +151,76 @@ export class ProfileComponent implements OnInit {
     return service ? service.name : 'Serviço não encontrado';
   }
 
-  // Validação de agendamento
   private getAppointmentsInSameWeek(newDate: string): any[] {
     const newAppointmentDate = parseISO(newDate);
     const weekInterval = {
-      start: startOfWeek(newAppointmentDate, { weekStartsOn: 1 }),
-      end: endOfWeek(newAppointmentDate, { weekStartsOn: 1 }),
+      start: startOfWeek(newAppointmentDate, { weekStartsOn: 0 }),
+      end: endOfWeek(newAppointmentDate, { weekStartsOn: 0 }),
     };
 
-    // Filtra todos os agendamentos dentro da mesma semana
     return this.appointments.filter((appointment) =>
       isWithinInterval(parseISO(appointment.appointmentDate), weekInterval)
     );
   }
-  // Agendamento
+
   async handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     var date = (form.elements.namedItem('date') as HTMLInputElement).value;
 
-    const appointmentsInSameWeek = this.getAppointmentsInSameWeek(date);
+    const appointmentsInSameWeek = await this.getAppointmentsInSameWeek(date);
+
+    console.log('Agendamentos da semana', appointmentsInSameWeek);
 
     if (appointmentsInSameWeek.length > 0) {
-      // Exibe o primeiro agendamento da semana
-      const firstAppointment = appointmentsInSameWeek[0];
+      const firstAppointmentInSameWeek = appointmentsInSameWeek[0];
       var result = confirm(
-        `Você já possui um agendamento marcado nesta semana no dia, ${firstAppointment.appointmentDate} gostaria de marcar esse agendamento no mesmo dia?`
+        `Você já possui um agendamento para essa semana. ${firstAppointmentInSameWeek.appointmentDate} - ${firstAppointmentInSameWeek.services[0].name}. Gostaria de marcar esse novo agendamento para a mesma data ?`
       );
       if (result) {
-        date = firstAppointment.appointmentDate;
-      } else {
-        return;
+        date = firstAppointmentInSameWeek.appointmentDate;
+        const serviceIds = this.selectedOptions;
+        const requestData: RequestCreateAppointment = {
+          serviceId: serviceIds,
+          appointmentDate: date,
+          appointmentTime: this.selectedTime,
+        };
+        await this.fetchWithLoading(
+          () => firstValueFrom(this.apiService.createAppointment(requestData)),
+          () => {
+            alert('Agendamento realizado com sucesso.');
+            this.loadAppointments();
+            this.closeModal();
+          },
+          () => alert('Erro ao agendar serviço.')
+        );
       }
+    } else {
+      const serviceIds = this.selectedOptions;
+      const requestData: RequestCreateAppointment = {
+        serviceId: serviceIds,
+        appointmentDate: date,
+        appointmentTime: this.selectedTime,
+      };
+
+      await this.fetchWithLoading(
+        () => firstValueFrom(this.apiService.createAppointment(requestData)),
+        () => {
+          alert('Agendamento realizado com sucesso.');
+          this.loadAppointments();
+          this.closeModal();
+        },
+        () => alert('Erro ao agendar serviço.')
+      );
     }
-
-    const serviceIds = this.selectedOptions;
-    const requestData: RequestCreateAppointment = {
-      serviceId: serviceIds,
-      appointmentDate: date,
-    };
-
-    await this.fetchWithLoading(
-      () => firstValueFrom(this.apiService.createAppointment(requestData)),
-      () => {
-        alert('Agendamento realizado com sucesso.');
-        this.loadAppointments();
-        this.closeModal();
-      },
-      () => alert('Erro ao agendar serviço.')
-    );
   }
 
   cancelAppointment(appointment: Appointment): void {
     const result = confirm('Deseja realmente cancelar o agendamento?');
     if (result) {
-      const appointmentDate = parseISO(appointment.appointmentDate); // Converte a data do agendamento
+      const appointmentDate = parseISO(appointment.appointmentDate);
       const twoDaysBefore = new Date(appointmentDate);
-      twoDaysBefore.setDate(appointmentDate.getDate() - 2); // Subtrai 2 dias da data do agendamento
+      twoDaysBefore.setDate(appointmentDate.getDate() - 2);
 
       // Verifica se a data atual é maior que a data limite (2 dias antes do agendamento)
       if (new Date() > twoDaysBefore) {
@@ -209,7 +230,6 @@ export class ProfileComponent implements OnInit {
         return;
       }
 
-      // Chama o serviço para cancelar o agendamento
       this.fetchWithLoading(
         () => firstValueFrom(this.apiService.cancelAppointment(appointment.id)),
         () => {
@@ -219,36 +239,9 @@ export class ProfileComponent implements OnInit {
         () => alert('Erro ao cancelar o agendamento.')
       );
     } else {
-      return; // Se o usuário cancelar a confirmação, nada acontece
+      return;
     }
   }
-
-  // cancelAppointment(appointment: Appointment): void {
-  //   var result = confirm('Deseja realmente cancelar o agendamento?');
-  //   if (result) {
-  //     const appointmentDate = parseISO(appointment.appointmentDate);
-  //     const twoDaysBefore = new Date(appointmentDate);
-  //     twoDaysBefore.setDate(appointmentDate.getDate() - 2);
-
-  //     if (new Date() > twoDaysBefore) {
-  //       alert(
-  //         'Cancelar de agendamento com menos de 2 dias de antecedência somente por telefone.'
-  //       );
-  //       return;
-  //     }
-
-  //     this.fetchWithLoading(
-  //       () => firstValueFrom(this.apiService.cancelAppointment(appointment.id)),
-  //       () => {
-  //         this.loadAppointments();
-  //         alert('Agendamento cancelado com sucesso.');
-  //       },
-  //       () => alert('Erro ao excluir o agendamento.')
-  //     );
-  //   } else {
-  //     return;
-  //   }
-  // }
 
   updateAppointment(appointment: Appointment): void {
     this.newServiceIdAppointmentUpdate = appointment.services[0].id;

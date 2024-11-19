@@ -43,6 +43,7 @@ public class CreateAppointmentUseCase implements ICreateAppointmentUseCase{
 
         Appointment appointment = Appointment.builder()
                 .appointmentDate(request.appointmentDate())
+                .appointmentTime(request.appointmentTime())
                 .status(AppointmentStatus.AGENDADO)
                 .client(user)
                 .services(services)
