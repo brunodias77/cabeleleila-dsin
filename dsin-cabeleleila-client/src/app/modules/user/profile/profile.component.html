@@ -1,13 +1,38 @@
 <section id="profile" class="w-full h-screen">
   <div class="max-w-screen-xl mx-auto text-center">
     <div class="w-full items-start justify-between md:flex">
-      <div class="max-w-lg">
+      <div class="max-w-7xl">
         <h3 class="text-white text-xl font-bold sm:text-2xl">
           Seus Agendamentos
         </h3>
         <p class="text-gray-400 mt-2">
           Acompanhe o historico de seus agendamentos na Cabeleleila Leila
         </p>
+        <!-- Filtro de datas -->
+        <div class="mt-8">
+          <label for="startDate" class="text-gray-700">Data Início: </label>
+          <input
+            type="date"
+            id="startDate"
+            [(ngModel)]="startDateFilterAppointments"
+            class="border border-gray-300 rounded px-2 py-1 ml-2"
+          />
+
+          <label for="endDate" class="ml-4 text-gray-700">Data Fim: </label>
+          <input
+            type="date"
+            id="endDate"
+            [(ngModel)]="endDateFilterAppointments"
+            class="border border-gray-300 rounded px-2 py-1 ml-2"
+          />
+
+          <button
+            (click)="filterAppointments()"
+            class="ml-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Filtrar
+          </button>
+        </div>
       </div>
       <app-button
         class="mt-3 md:mt-0"
@@ -18,13 +43,24 @@
     </div>
 
     <div class="mt-12">
-      <ng-container *ngIf="appointments.length; else emptyState">
+      <ng-container *ngIf="filteredAppointments.length; else showAppointments">
         <app-appointment-table
-          [appointments]="appointments"
+          [appointments]="filteredAppointments"
           (onUpdate)="updateAppointment($event)"
           (onDelete)="cancelAppointment($event)"
         ></app-appointment-table>
       </ng-container>
+
+      <ng-template #showAppointments>
+        <ng-container *ngIf="appointments.length; else emptyState">
+          <app-appointment-table
+            [appointments]="appointments"
+            (onUpdate)="updateAppointment($event)"
+            (onDelete)="cancelAppointment($event)"
+          ></app-appointment-table>
+        </ng-container>
+      </ng-template>
+
       <ng-template #emptyState>
         <div class="text-white h-screen flex items-center justify-center">
           <span>Você ainda não possui agendamentos na Cabeleleila Leila</span>
@@ -50,6 +86,114 @@
             [min]="today"
             required
           />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold mb-2"> Hora: </label>
+          <ul id="timetable" class="grid w-full grid-cols-2 gap-2 mt-5">
+            <li>
+              <input
+                type="radio"
+                id="10-am"
+                value="10:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="selectedTime"
+              />
+              <label
+                for="10-am"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                10:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="11-am"
+                value="11:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="selectedTime"
+              />
+              <label
+                for="11-am"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                11:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="12-am"
+                value="12:00"
+                class="hidden peer"
+                name="timetable"
+                checked
+                [(ngModel)]="selectedTime"
+              />
+              <label
+                for="12-am"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                12:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="2-pm"
+                value="14:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="selectedTime"
+              />
+              <label
+                for="2-pm"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                14:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="3-pm"
+                value="15:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="selectedTime"
+              />
+              <label
+                for="3-pm"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                15:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="4-pm"
+                value="16:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="selectedTime"
+              />
+              <label
+                for="4-pm"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                16:00
+              </label>
+            </li>
+          </ul>
         </div>
 
         <div class="mb-4">
@@ -106,7 +250,7 @@
           </button>
           <button
             type="submit"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
           >
             Agendar
           </button>
@@ -114,6 +258,7 @@
       </form>
     </app-appointment-modal>
 
+    <!-- Modal Atualizacao Appointment -->
     <app-appointment-modal
       *ngIf="modalUpdateAppointmentIsOpen"
       [title]="'Alterar Item do Agendamento'"
@@ -133,6 +278,114 @@
             [(ngModel)]="newDateAppointmentUpdate"
             required
           />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold mb-2"> Hora: </label>
+          <ul id="timetable" class="grid w-full grid-cols-2 gap-2 mt-5">
+            <li>
+              <input
+                type="radio"
+                id="10-am"
+                value="10:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
+              />
+              <label
+                for="10-am"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                10:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="11-am"
+                value="11:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
+              />
+              <label
+                for="11-am"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                11:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="12-am"
+                value="12:00"
+                class="hidden peer"
+                name="timetable"
+                checked
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
+              />
+              <label
+                for="12-am"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                12:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="2-pm"
+                value="14:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
+              />
+              <label
+                for="2-pm"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                14:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="3-pm"
+                value="15:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
+              />
+              <label
+                for="3-pm"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                15:00
+              </label>
+            </li>
+
+            <li>
+              <input
+                type="radio"
+                id="4-pm"
+                value="16:00"
+                class="hidden peer"
+                name="timetable"
+                [(ngModel)]="newSelectedTimeAppointmentUpdate"
+              />
+              <label
+                for="4-pm"
+                class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+              >
+                16:00
+              </label>
+            </li>
+          </ul>
         </div>
 
         <div class="mb-4">
@@ -161,12 +414,35 @@
           </button>
           <button
             type="submit"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
           >
             Agendar
           </button>
         </div>
       </form>
     </app-appointment-modal>
+
+    <div
+      *ngIf="showAlert"
+      class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p class="text-lg">{{ alertMessage }}</p>
+        <div class="mt-4 flex justify-between gap-5">
+          <button
+            (click)="confirmAlert()"
+            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Sim
+          </button>
+          <button
+            (click)="cancelAlert()"
+            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Não
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

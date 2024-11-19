@@ -16,12 +16,17 @@
           <span class="text-[#7AE186]">{{ username }}</span>
         </a>
       </ng-container>
+
       <ng-container *ngIf="isAdmin">
         <a href="/painel" class="flex items-center justify-center gap-4">
           <img src="assets/icons/user.svg" alt="" />
           <span class="text-[#7AE186]">Painel Administrativo</span>
         </a>
       </ng-container>
+      <button (click)="logout()" class="flex items-center justify-center gap-4">
+        <img src="assets/icons/logout.svg" alt="" />
+        <span class="text-[#7AE186]">Sair</span>
+      </button>
       <ng-template #login>
         <a href="/login" class="flex items-center justify-center gap-4">
           <img src="assets/icons/user.svg" alt="" />

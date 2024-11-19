@@ -9,9 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,19 +17,16 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestUpdateAppointment {
-
+public class RequestUpdateAppointmentAdmin {
     @NotNull(message = "A data e hora do agendamento são obrigatórias.")
     @Future(message = "A data e hora do agendamento devem ser no futuro.")
-    private LocalDate appointmentDate;
+     LocalDate appointmentDate;
 
     @NotNull(message = "A hora do agendamento é obrigatória.")
     LocalTime appointmentTime;
 
     @NotNull(message = "A lista de serviços não pode estar vazia.")
     @NotEmpty(message = "É necessário selecionar ao menos um serviço.")
-    private Set<UUID> serviceId;
-
-
+     Set<UUID> serviceId;
 
 }

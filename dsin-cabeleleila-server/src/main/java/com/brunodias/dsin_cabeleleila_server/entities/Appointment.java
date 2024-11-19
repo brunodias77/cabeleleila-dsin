@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,11 @@ import java.util.HashSet;
 @Getter
 @Setter
 public class Appointment extends BaseEntity {
+
+    @Column(nullable = false)
+    private LocalTime appointmentTime;
+
+    @Column(nullable = false)
 
     private LocalDate appointmentDate;
 
