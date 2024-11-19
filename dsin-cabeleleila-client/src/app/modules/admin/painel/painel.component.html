@@ -26,3 +26,38 @@
     </div>
   </div>
 </section>
+
+
+<div class="flex h-screen bg-gray-100">
+  <!-- Barra Lateral -->
+  <div class="w-64 bg-gray-800 text-white h-full flex flex-col">
+    <div class="flex items-center justify-center p-4">
+      <h1 class="text-2xl font-semibold">Admin Panel</h1>
+    </div>
+    <ul class="flex-1 space-y-2 p-4">
+      <li><a routerLink="/dashboard" routerLinkActive="text-white" class="text-gray-300 hover:text-white">Dashboard</a></li>
+      <li><a routerLink="/users" routerLinkActive="text-white" class="text-gray-300 hover:text-white">Usuários</a></li>
+      <li><a routerLink="/settings" routerLinkActive="text-white" class="text-gray-300 hover:text-white">Configurações</a></li>
+    </ul>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="flex-1 flex flex-col">
+    <!-- Barra Superior -->
+    <div class="bg-gray-800 text-white p-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <span class="text-xl font-semibold">Painel Admin</span>
+      </div>
+      <div>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Conteúdo da Página -->
+    <div class="flex-1 p-6">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

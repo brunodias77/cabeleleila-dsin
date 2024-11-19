@@ -4,5 +4,5 @@ import com.brunodias.dsin_cabeleleila_server.dtos.BaseResponseDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.WeeklyPerformanceDTO;
 
 public interface IWeeklyPerformanceUseCase {
-    public BaseResponseDTO execute();
+    public BaseResponseDTO execute(RequestWeeklyPerformaceAdmin request);
 }

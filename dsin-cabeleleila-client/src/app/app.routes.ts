@@ -12,4 +12,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent },
   { path: 'painel', component: PainelComponent },
+  { path: 'painel/admin/performance', component: PainelComponent },
+  { path: 'painel/admin/create-service', component: PainelComponent },
+  { path: 'painel/admin/appointments', component: PainelComponent },
 ];
