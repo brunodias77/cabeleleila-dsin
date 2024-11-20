@@ -14,7 +14,7 @@ INSERT INTO roles (id, created_date, name) VALUES
 -- Inserir usuários
 INSERT INTO users (id, created_date, updated_date, name, phone_number, email, password) VALUES
 ('b16e7fe7-6c2f-4416-ae41-3ba3c2aea2a9',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,  'Leila Silva', '+55 11 91234-5678', 'leila@admin.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y'),
-('6c39600a-6139-4cbb-9809-9efd8b1b08f8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Bruno Dias', '+55 11 98765-4321', 'bruno@teste.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y');
+('6c39600a-6139-4cbb-9809-9efd8b1b08f8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Bruno Dias', '+55 11 98765-4321', 'bruno@user.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y');
 
 
 -- Associar ROLE_ADMIN ao usuário 'Leila Silva'
@@ -27,7 +27,7 @@ VALUES (
 -- Associar ROLE_USER ao usuário 'Bruno Dias'
 INSERT INTO user_roles (user_id, role_id)
 VALUES (
-    (SELECT id FROM users WHERE email = 'bruno@teste.com'),
+    (SELECT id FROM users WHERE email = 'bruno@user.com'),
     (SELECT id FROM roles WHERE name = 'ROLE_USER')
 );
 
