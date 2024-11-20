@@ -29,9 +29,20 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     int countByAppointmentDateBetweenAndStatus(LocalDate startDate, LocalDate endDate, AppointmentStatus status);
 
-    @Query("SELECT SUM(s.price) FROM Appointment a " +
-            "JOIN a.services s " +
+    @Query("SELECT a FROM Appointment a " +
             "WHERE a.appointmentDate BETWEEN :startDate AND :endDate")
-    BigDecimal calculateRevenueByAppointmentDateBetween(LocalDate startDate, LocalDate endDate);
+    List<Appointment> findAppointmentsBetweenDates(LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT a.appointmentDate, a.appointmentTime, a.id, a.status, s.name, s.price " +
+            "FROM Appointment a JOIN a.services s")
+    List<Object[]> findAllAppointmentsDetails();
+
+    @Query("SELECT a FROM Appointment a " +
+            "JOIN a.client u " +
+            "WHERE u.id = :clientId")
+    List<Appointment> findAllByClientId(UUID clientId);
+
+
+
 
 }

@@ -1,0 +1,251 @@
+<h1 class="text-bold text-gray-800 text-center mb-[100px]">
+  Todos os Agendamentos
+</h1>
+
+<ng-container *ngIf="appointments.length; else emptyState">
+  <div
+    *ngFor="let appointment of appointments"
+    class="border border-green-500 rounded-md p-4 mb-8"
+  >
+    <!-- Cabeçalho do item -->
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg text-green-500 font-bold">
+        {{ appointment.appointmentDate }}
+      </h3>
+      <button
+        (click)="toggleTable(appointment.id)"
+        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none"
+      >
+        {{ appointment.showTable ? "Ocultar" : "Ver Mais" }}
+      </button>
+    </div>
+
+    <!-- Tabela -->
+    <div *ngIf="appointment.showTable" class="mt-4">
+      <app-appointment-table-admin
+        [appointment]="appointment"
+        (onUpdate)="updateAppointmentAdmin($event)"
+        (onDelete)="cancelAppointmentAdmin($event)"
+        (onConfirm)="confirmAppointmentAdmin($event)"
+      ></app-appointment-table-admin>
+    </div>
+  </div>
+</ng-container>
+<ng-template #emptyState>
+  <div class="text-gray-700 h-screen flex items-center justify-center">
+    <span>Não existe nenhum agendamento no momento</span>
+  </div>
+</ng-template>
+
+<div
+  *ngIf="showAlert"
+  class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+>
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+    <p class="text-lg">{{ alertMessage }}</p>
+    <div class="mt-4 flex justify-between gap-5">
+      <button
+        (click)="confirmAlert()"
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+      >
+        Sim
+      </button>
+      <button
+        (click)="cancelAlert()"
+        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+      >
+        Não
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-appointment-modal
+  *ngIf="modalUpdateAppointmentIsOpen"
+  [title]="'Alterar Item do Agendamento'"
+  (onClose)="closeUpdateAppointmentModal()"
+>
+  <form (submit)="handleUpdateSubmit($event)">
+    <div class="mb-4">
+      <label for="date" class="block text-gray-700 font-bold mb-2">Data:</label>
+      <input
+        id="date"
+        type="date"
+        name="date"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+        [min]="today"
+        [(ngModel)]="appointmentUpdate_date"
+        required
+      />
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2"> Hora: </label>
+      <ul id="timetable" class="grid w-full grid-cols-2 gap-2 mt-5">
+        <li>
+          <input
+            type="radio"
+            id="10-am"
+            value="10:00"
+            class="hidden peer"
+            name="timetable"
+            [(ngModel)]="appointmentUpdate_time"
+          />
+          <label
+            for="10-am"
+            class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+          >
+            10:00
+          </label>
+        </li>
+
+        <li>
+          <input
+            type="radio"
+            id="11-am"
+            value="11:00"
+            class="hidden peer"
+            name="timetable"
+            [(ngModel)]="appointmentUpdate_time"
+          />
+          <label
+            for="11-am"
+            class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+          >
+            11:00
+          </label>
+        </li>
+
+        <li>
+          <input
+            type="radio"
+            id="12-am"
+            value="12:00"
+            class="hidden peer"
+            name="timetable"
+            checked
+            [(ngModel)]="appointmentUpdate_time"
+          />
+          <label
+            for="12-am"
+            class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+          >
+            12:00
+          </label>
+        </li>
+
+        <li>
+          <input
+            type="radio"
+            id="2-pm"
+            value="14:00"
+            class="hidden peer"
+            name="timetable"
+            [(ngModel)]="appointmentUpdate_time"
+          />
+          <label
+            for="2-pm"
+            class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+          >
+            14:00
+          </label>
+        </li>
+
+        <li>
+          <input
+            type="radio"
+            id="3-pm"
+            value="15:00"
+            class="hidden peer"
+            name="timetable"
+            [(ngModel)]="appointmentUpdate_time"
+          />
+          <label
+            for="3-pm"
+            class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+          >
+            15:00
+          </label>
+        </li>
+
+        <li>
+          <input
+            type="radio"
+            id="4-pm"
+            value="16:00"
+            class="hidden peer"
+            name="timetable"
+            [(ngModel)]="appointmentUpdate_time"
+          />
+          <label
+            for="4-pm"
+            class="inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center bg-white border rounded-lg cursor-pointer dark:hover:text-white dark:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-500 hover:text-white peer-checked:text-white hover:bg-green-500 dark:text-green-500 dark:hover:bg-green-600 dark:hover:border-green-600 dark:peer-checked:bg-green-500"
+          >
+            16:00
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <div class="mb-4">
+      <label for="services" class="block text-gray-700 font-bold mb-2"
+        >Serviços:</label
+      >
+      <select
+        id="services"
+        name="services"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+        [(ngModel)]="newOption"
+      >
+        <option *ngFor="let service of services" [value]="service.id">
+          {{ service.name }} - R$ {{ service.price }}
+        </option>
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+      (click)="addOption(newOption)"
+      [disabled]="!newOption"
+    >
+      Adicionar Serviço
+    </button>
+
+    <div class="mt-4">
+      <p *ngIf="selectedOptions.length > 0" class="font-bold mb-2">
+        Selecionados:
+      </p>
+      <div
+        *ngFor="let option of selectedOptions"
+        class="flex items-center mb-2"
+      >
+        <span class="mr-2">{{ getServiceName(option) }}</span>
+        <button
+          type="button"
+          class="text-red-500 hover:text-red-600 font-bold"
+          (click)="removeOption(option)"
+        >
+          Remover
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-end space-x-4">
+      <button
+        type="button"
+        class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+        (click)="closeUpdateAppointmentModal()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        (click)="handleUpdateSubmit($event)"
+      >
+        Agendar
+      </button>
+    </div>
+  </form>
+</app-appointment-modal>

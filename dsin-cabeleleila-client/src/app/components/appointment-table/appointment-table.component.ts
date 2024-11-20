@@ -11,7 +11,7 @@ import { ButtonComponent } from '../ui/button/button.component';
   styleUrl: './appointment-table.component.scss',
 })
 export class AppointmentTableComponent {
-  @Input() appointments: Appointment[] = [];
+  @Input() appointment: Appointment | undefined;
   @Output() onUpdate = new EventEmitter<Appointment>();
   @Output() onDelete = new EventEmitter<Appointment>();
 

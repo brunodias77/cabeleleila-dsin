@@ -48,14 +48,14 @@ export class ProfileComponent implements OnInit {
   appointments: Appointment[] = [];
   today = this.getTodayDate();
   newOption: string | null = null;
-  newServiceIdAppointmentUpdate: string = '';
+  newServiceIdAppointmentUpdate: string[] = [];
   newDateAppointmentUpdate: string = '';
   newSelectedTimeAppointmentUpdate: string = '';
   newAppointmentIdUpdate: string = '';
   selectedTime: string = '12:00 AM';
-  showAlert = false;
-  alertMessage = '';
-  alertResponse: boolean = false;
+  showAlert: boolean = false;
+  alertMessage: string = '';
+  alertResponse: boolean | null = null;
   filteredAppointments: Appointment[] = [];
   startDateFilterAppointments: string = '';
   endDateFilterAppointments: string = '';
@@ -116,14 +116,20 @@ export class ProfileComponent implements OnInit {
 
   private loadServices(): void {
     this.apiService.getDataServices().subscribe({
-      next: (response) => (this.services = response.data),
+      next: (response) => {
+        this.services = response.data;
+        console.log('Serviços', this.services);
+      },
       error: (err) => console.error('Erro ao carregar serviços:', err),
     });
   }
 
   private loadAppointments(): void {
     this.apiService.getAllAppointments().subscribe({
-      next: (appointments) => (this.appointments = appointments),
+      next: (appointments) => {
+        this.appointments = appointments.data;
+        console.log('Appointments', this.appointments);
+      },
       error: (err) => console.error('Erro ao carregar agendamentos:', err),
     });
   }
@@ -190,10 +196,11 @@ export class ProfileComponent implements OnInit {
 
     if (appointmentsInSameWeek.length > 0) {
       const firstAppointmentInSameWeek = appointmentsInSameWeek[0];
-      var result = confirm(
-        `Você já possui um agendamento para essa semana. ${firstAppointmentInSameWeek.appointmentDate} - ${firstAppointmentInSameWeek.services[0].name}. Gostaria de marcar esse novo agendamento para a mesma data ?`
+
+      const userConfirmed = await this.showAlertAsync(
+        `Você já possui um agendamento para essa semana. ${firstAppointmentInSameWeek.appointmentDate} - ${firstAppointmentInSameWeek.services[0].serviceName}. Gostaria de marcar esse novo agendamento para a mesma data ?`
       );
-      if (result) {
+      if (userConfirmed) {
         date = firstAppointmentInSameWeek.appointmentDate;
         const serviceIds = this.selectedOptions;
         const requestData: RequestCreateAppointment = {
@@ -248,13 +255,14 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  cancelAppointment(appointment: Appointment): void {
-    const result = confirm('Deseja realmente cancelar o agendamento?');
-    if (result) {
+  async cancelAppointment(appointment: Appointment): Promise<void> {
+    const userConfirmed = await this.showAlertAsync(
+      'Tem certeza que deseja cancelar este agendamento?'
+    );
+    if (userConfirmed) {
       const appointmentDate = parseISO(appointment.appointmentDate);
       const twoDaysBefore = new Date(appointmentDate);
       twoDaysBefore.setDate(appointmentDate.getDate() - 2);
-
       // Verifica se a data atual é maior que a data limite (2 dias antes do agendamento)
       if (new Date() > twoDaysBefore) {
         alert(
@@ -276,10 +284,20 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  toggleTable(appointmentId: string) {
+    const appointment = this.appointments.find((i) => i.id === appointmentId);
+    if (appointment) {
+      appointment.showTable = !appointment.showTable;
+    }
+  }
+
   updateAppointment(appointment: Appointment): void {
-    this.newServiceIdAppointmentUpdate = appointment.services[0].id;
+    this.newServiceIdAppointmentUpdate = appointment.services.map(
+      (service) => service.id
+    );
     this.newDateAppointmentUpdate = appointment.appointmentDate;
     this.newAppointmentIdUpdate = appointment.id;
+    this.selectedOptions = appointment.services.map((service) => service.id);
 
     const appointmentDate = parseISO(appointment.appointmentDate);
     const twoDaysBefore = new Date(appointmentDate);
@@ -300,15 +318,14 @@ export class ProfileComponent implements OnInit {
 
   async handleUpdateSubmit(event: Event): Promise<void> {
     event.preventDefault();
+    this.newServiceIdAppointmentUpdate = this.selectedOptions;
     const appointment: RequestUpadateAppointment = {
-      serviceId: [this.newServiceIdAppointmentUpdate],
+      serviceId: this.newServiceIdAppointmentUpdate,
       appointmentDate: this.newDateAppointmentUpdate,
       appointmentTime: this.newSelectedTimeAppointmentUpdate,
     };
 
-    console.log('Tentando fazer o update');
     console.log('appointment', appointment);
-    console.log('newAppointmentIdUpdate', this.newAppointmentIdUpdate);
 
     await this.fetchWithLoading(
       () =>
@@ -328,5 +345,35 @@ export class ProfileComponent implements OnInit {
         alert('Erro ao atualizar o agendamento.');
       }
     );
+  }
+
+  async testeAlert(appointment: Appointment) {
+    const userConfirmed = await this.showAlertAsync(
+      'Tem certeza que deseja cancelar este agendamento?'
+    );
+    if (userConfirmed) {
+      alert('Usuário confirmou');
+    } else {
+      alert('Usuário cancelou');
+    }
+  }
+
+  showAlertAsync(message: string): Promise<boolean> {
+    this.alertMessage = message;
+    this.showAlert = true;
+
+    return new Promise((resolve, reject) => {
+      this.confirmAlert = () => {
+        this.showAlert = false;
+        this.alertResponse = true;
+        resolve(true); // Resolve com "Sim"
+      };
+
+      this.cancelAlert = () => {
+        this.showAlert = false;
+        this.alertResponse = false;
+        resolve(false); // Resolve com "Não"
+      };
+    });
   }
 }

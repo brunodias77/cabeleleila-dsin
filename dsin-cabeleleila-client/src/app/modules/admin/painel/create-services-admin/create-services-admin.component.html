@@ -1,0 +1,86 @@
+<div id="panel-admin" class="w-full h-screen">
+  <div class="max-w-screen-xl mx-auto text-center">
+    <h1 class="space-y-4 mb-4">Criar Serviço</h1>
+    <form
+      [formGroup]="createServiceForm"
+      (ngSubmit)="createServiceOnSubimit()"
+      class="space-y-4"
+    >
+      <div class="mb-4">
+        <label for="name" class="block text-sm font-medium text-gray-700"
+          >Nome</label
+        >
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="w-full border border-gray-300 rounded px-3 py-2"
+          required
+        />
+
+        <div
+          *ngIf="
+            createServiceForm.controls['name'].invalid &&
+            createServiceForm.controls['name'].touched
+          "
+          class="text-red-500 text-sm"
+        >
+          O nome é obrigatório e deve ter pelo menos 3 caracteres.
+        </div>
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700"
+          >Descrição</label
+        >
+        <textarea
+          id="description"
+          formControlName="description"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Enter description"
+        ></textarea>
+        <div
+          *ngIf="
+            createServiceForm.controls['description'].invalid &&
+            createServiceForm.controls['description'].touched
+          "
+          class="text-red-500 text-sm"
+        >
+          A descrição é obrigatória e não deve exceder 200 caracteres.
+        </div>
+      </div>
+
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700"
+          >Preço</label
+        >
+        <input
+          id="price"
+          type="number"
+          formControlName="price"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Enter price"
+        />
+        <div
+          *ngIf="
+            createServiceForm.controls['price'].invalid &&
+            createServiceForm.controls['price'].touched
+          "
+          class="text-red-500 text-sm"
+        >
+          Price is required and must be a positive number.
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="createServiceForm.invalid"
+          class="w-full bg-green-600 text-white p-2 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+        >
+          Criar Serviço
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

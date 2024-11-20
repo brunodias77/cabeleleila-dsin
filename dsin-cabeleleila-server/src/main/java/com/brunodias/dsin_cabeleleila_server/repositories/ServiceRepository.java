@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface ServiceRepository extends JpaRepository<Service, UUID> {
     Optional<Service> findById(UUID id);
+    boolean existsByName(String name);
+
 }
