@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../../services/api/api.service';
 import { firstValueFrom } from 'rxjs';
-import { ToastComponent } from '../../../components/ui/toast/toast.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -11,11 +10,9 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  imports: [ToastComponent, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
 })
 export class RegisterComponent {
-  @ViewChild(ToastComponent) toastComponent!: ToastComponent;
-
   public formData = {
     name: '',
     phoneNumber: '',
@@ -35,13 +32,9 @@ export class RegisterComponent {
         this.apiService.registerUser(this.formData)
       );
       if (response.status === 201) {
-        this.toastComponent.message = 'Usuário registrado com sucesso!';
-        this.toastComponent.type = 'success';
         this.router.navigate(['/login']);
       }
     } catch (error: any) {
-      this.toastComponent.message = error.error || 'Ocorreu um erro.';
-      this.toastComponent.type = 'error';
     } finally {
       this.isLoading = false;
     }

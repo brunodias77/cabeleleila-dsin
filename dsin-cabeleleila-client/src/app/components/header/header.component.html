@@ -1,38 +1,72 @@
 <div class="w-full">
   <div
-    class="max-w-screen-xl mx-auto flex items-center justify-between py-4 px-2"
+    class="max-w-screen-xl mx-auto flex items-center justify-between py-4 px-4 md:px-6"
   >
+    <!-- Logo -->
     <a
       href="#"
-      class="flex items-center justify-center mb-6 text-2xl text-white"
+      class="flex items-center justify-center mb-6 text-2xl text-white font-semibold"
     >
-      <img class="w-6 h-6 mr-2" src="assets/icons/scissors.svg" alt="logo" />
+      <img
+        class="w-6 h-6 mr-2"
+        src="assets/icons/scissors.svg"
+        alt="Cabeleleila Leila Logo"
+      />
       Cabeleleila Leila
     </a>
-    <nav class="flex items-center justify-center gap-4">
-      <ng-container *ngIf="username; else login">
-        <a href="/profile" class="flex items-center justify-center gap-4">
-          <img src="assets/icons/user.svg" alt="" />
-          <span class="text-[#7AE186]">{{ username }}</span>
-        </a>
-      </ng-container>
 
-      <ng-container *ngIf="isAdmin">
-        <a href="/painel" class="flex items-center justify-center gap-4">
-          <img src="assets/icons/user.svg" alt="" />
-          <span class="text-[#7AE186]">Painel Administrativo</span>
-        </a>
+    <nav class="flex items-center justify-center gap-6">
+      <a
+        href="/profile"
+        class="flex items-center gap-3 text-white hover:text-[#7AE186] transition duration-300"
+      >
+        <img
+          src="assets/icons/user.svg"
+          alt="Ícone de painel administrativo"
+          class="w-5 h-5"
+        />
+        <span class="text-[#7AE186]">Perfil</span>
+      </a>
+      <a
+        href="/painel"
+        class="flex items-center gap-3 text-white hover:text-[#7AE186] transition duration-300"
+      >
+        <img
+          src="assets/icons/user.svg"
+          alt="Ícone de painel administrativo"
+          class="w-5 h-5"
+        />
+        <span class="text-[#7AE186]">Painel Administrativo</span>
+      </a>
+
+      <ng-container *ngIf="username; else login">
+        <span class="text-[#7AE186]">Ola, {{ username }}</span>
       </ng-container>
-      <button (click)="logout()" class="flex items-center justify-center gap-4">
-        <img src="assets/icons/logout.svg" alt="" />
-        <span class="text-[#7AE186]">Sair</span>
-      </button>
       <ng-template #login>
-        <a href="/login" class="flex items-center justify-center gap-4">
-          <img src="assets/icons/user.svg" alt="" />
+        <a
+          href="/login"
+          class="flex items-center gap-3 text-white hover:text-[#7AE186] transition duration-300"
+        >
+          <img
+            src="assets/icons/user.svg"
+            alt="Ícone de login"
+            class="w-5 h-5"
+          />
           <span class="text-[#7AE186]">Entrar</span>
         </a>
       </ng-template>
+
+      <button
+        (click)="logout()"
+        class="flex items-center gap-3 text-white hover:text-[#7AE186] transition duration-300"
+      >
+        <img
+          src="assets/icons/logout.svg"
+          alt="Ícone de logout"
+          class="w-5 h-5"
+        />
+        <span class="text-[#7AE186]">Sair</span>
+      </button>
     </nav>
   </div>
 </div>

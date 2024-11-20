@@ -9,7 +9,7 @@
         <a
           (click)="currentComponent = 'performance'"
           class="text-gray-300 hover:text-white"
-          >Performace Semanal</a
+          >Performance Semanal</a
         >
       </li>
       <li>
@@ -29,8 +29,10 @@
     </ul>
   </div>
 
+  <!-- Conteúdo Principal com Scroll -->
   <div class="flex-1 flex flex-col">
-    <div class="flex-1 p-6">
+    <div class="flex-1 p-6 overflow-y-auto">
+      <!-- Scroll só na área de conteúdo -->
       <div *ngIf="currentComponent === 'performance'">
         <app-weekly-performance></app-weekly-performance>
       </div>

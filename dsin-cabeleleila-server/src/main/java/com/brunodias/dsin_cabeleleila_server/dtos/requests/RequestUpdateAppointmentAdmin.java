@@ -19,7 +19,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RequestUpdateAppointmentAdmin {
     @NotNull(message = "A data e hora do agendamento são obrigatórias.")
-    @Future(message = "A data e hora do agendamento devem ser no futuro.")
      LocalDate appointmentDate;
 
     @NotNull(message = "A hora do agendamento é obrigatória.")

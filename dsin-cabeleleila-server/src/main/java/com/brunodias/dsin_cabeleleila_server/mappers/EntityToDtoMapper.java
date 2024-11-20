@@ -21,7 +21,7 @@ public class EntityToDtoMapper {
 
     public static AppointmentDetailsDTO mapAppointmentToDtoBasic(Appointment appointment) {
         List<ServiceDTO> serviceDTOList = appointment.getServices().stream()
-                .map(service -> new ServiceDTO(service.getName(), service.getPrice())) // Cria o ServiceDTO
+                .map(service -> new ServiceDTO(service.getId(),service.getName(), service.getPrice())) // Cria o ServiceDTO
                 .collect(Collectors.toList());
 
         // Criação e retorno do DTO do agendamento
