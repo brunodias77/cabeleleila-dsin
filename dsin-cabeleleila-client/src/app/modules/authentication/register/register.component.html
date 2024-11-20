@@ -18,20 +18,37 @@
         >
           Crie sua conta
         </h1>
-        <form class="space-y-4 md:space-y-6" (ngSubmit)="handleRegister()">
+        <form
+          [formGroup]="registerForm"
+          (ngSubmit)="handleRegister()"
+          class="space-y-4 md:space-y-6"
+        >
           <div>
             <label for="name" class="block mb-2 text-sm font-medium text-white"
               >Nome</label
             >
             <input
               type="text"
-              name="name"
               id="name"
+              formControlName="name"
               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Seu sobrenome"
+              placeholder="Seu nome"
               required
-              [(ngModel)]="formData.name"
             />
+            <div
+              *ngIf="
+                registerForm.get('name')?.touched &&
+                registerForm.get('name')?.invalid
+              "
+              class="text-red-500 text-sm mt-2"
+            >
+              <div *ngIf="registerForm.get('name')?.hasError('required')">
+                O nome é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('name')?.hasError('minlength')">
+                O nome deve ter pelo menos 3 caracteres.
+              </div>
+            </div>
           </div>
 
           <div>
@@ -42,13 +59,28 @@
             >
             <input
               type="tel"
-              name="phoneNumber"
               id="phoneNumber"
+              formControlName="phoneNumber"
               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="(xx) xxxxx-xxxx"
               required
-              [(ngModel)]="formData.phoneNumber"
             />
+            <div
+              *ngIf="
+                registerForm.get('phoneNumber')?.touched &&
+                registerForm.get('phoneNumber')?.invalid
+              "
+              class="text-red-500 text-sm mt-2"
+            >
+              <div
+                *ngIf="registerForm.get('phoneNumber')?.hasError('required')"
+              >
+                O telefone é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('phoneNumber')?.hasError('pattern')">
+                O telefone deve seguir o formato (xx)xxxxxxxxx.
+              </div>
+            </div>
           </div>
 
           <div>
@@ -57,13 +89,26 @@
             >
             <input
               type="email"
-              name="email"
               id="email"
+              formControlName="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="name@company.com"
               required
-              [(ngModel)]="formData.email"
             />
+            <div
+              *ngIf="
+                registerForm.get('email')?.touched &&
+                registerForm.get('email')?.invalid
+              "
+              class="text-red-500 text-sm mt-2"
+            >
+              <div *ngIf="registerForm.get('email')?.hasError('required')">
+                O email é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('email')?.hasError('email')">
+                O email não é válido.
+              </div>
+            </div>
           </div>
 
           <div>
@@ -74,30 +119,43 @@
             >
             <input
               type="password"
-              name="password"
               id="password"
+              formControlName="password"
               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="••••••••"
               required
-              [(ngModel)]="formData.password"
             />
+            <div
+              *ngIf="
+                registerForm.get('password')?.touched &&
+                registerForm.get('password')?.invalid
+              "
+              class="text-red-500 text-sm mt-2"
+            >
+              <div *ngIf="registerForm.get('password')?.hasError('required')">
+                A senha é obrigatória.
+              </div>
+              <div *ngIf="registerForm.get('password')?.hasError('minlength')">
+                A senha deve ter pelo menos 6 caracteres.
+              </div>
+            </div>
           </div>
 
           <button
             type="submit"
-            [disabled]="isLoading"
+            [disabled]="isLoading || !registerForm.valid"
             class="w-full text-[#0b181e] bg-[#7AE186] border-0 py-2.5 px-4 focus:outline-none hover:bg-[#60b268] rounded-lg"
           >
             <ng-container *ngIf="!isLoading; else loadingTemplate">
               Registar
             </ng-container>
-            <ng-template #loadingTemplate> Registrando... </ng-template>
+            <ng-template #loadingTemplate>...</ng-template>
           </button>
 
           <p class="text-sm font-light text-gray-500 dark:text-gray-400">
             Já tem uma conta?
             <a
-              routerLink="/login"
+              href="/login"
               class="font-medium text-primary-600 hover:underline dark:text-primary-500 text-[#7AE186]"
             >
               Entre aqui

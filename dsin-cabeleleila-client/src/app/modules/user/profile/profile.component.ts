@@ -196,10 +196,11 @@ export class ProfileComponent implements OnInit {
 
     if (appointmentsInSameWeek.length > 0) {
       const firstAppointmentInSameWeek = appointmentsInSameWeek[0];
-      var result = confirm(
-        `Você já possui um agendamento para essa semana. ${firstAppointmentInSameWeek.appointmentDate} - ${firstAppointmentInSameWeek.services[0].name}. Gostaria de marcar esse novo agendamento para a mesma data ?`
+
+      const userConfirmed = await this.showAlertAsync(
+        `Você já possui um agendamento para essa semana. ${firstAppointmentInSameWeek.appointmentDate} - ${firstAppointmentInSameWeek.services[0].serviceName}. Gostaria de marcar esse novo agendamento para a mesma data ?`
       );
-      if (result) {
+      if (userConfirmed) {
         date = firstAppointmentInSameWeek.appointmentDate;
         const serviceIds = this.selectedOptions;
         const requestData: RequestCreateAppointment = {

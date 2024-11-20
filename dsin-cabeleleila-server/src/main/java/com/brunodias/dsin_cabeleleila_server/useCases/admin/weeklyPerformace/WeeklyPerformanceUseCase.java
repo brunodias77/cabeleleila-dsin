@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,27 +27,26 @@ public class WeeklyPerformanceUseCase implements IWeeklyPerformanceUseCase{
                     .build();
             }
 
-        AppointmentStatus statusScheduled = AppointmentStatus.AGENDADO;
-        AppointmentStatus statusCanceled = AppointmentStatus.CANCELADO;
+        var appointments = _appointmentRepository.findAppointmentsBetweenDates(request.getStartDate(), request.getEndDate());
+         List<Appointment> filteredAppointments = appointments.stream()
+                .filter(appointment -> appointment.getStatus() == AppointmentStatus.AGENDADO || appointment.getStatus() == AppointmentStatus.CONFIRMADO)
+                .collect(Collectors.toList());
 
-        int totalScheduledServices = _appointmentRepository.countByAppointmentDateBetweenAndStatus(request.getStartDate(), request.getEndDate(), statusScheduled);
-        int totalCancelledServices = _appointmentRepository.countByAppointmentDateBetweenAndStatus(request.getStartDate(), request.getEndDate(), statusCanceled);
+        int totalSheduledOrConfirmed = filteredAppointments.size();
+        int totalCancelledServices = appointments.size() - filteredAppointments.size();
 
-       var appointments = _appointmentRepository.findAppointmentsBetweenDates(request.getStartDate(), request.getEndDate());
         double totalRevenue = 0.0;
 
-        for (var appointment : appointments) {
-            if(appointment.getStatus() == AppointmentStatus.AGENDADO){
-                for (var service : appointment.getServices()) {
-                    totalRevenue += service.getPrice();
-                }
+        for(var appointment : filteredAppointments){
+            for (var service : appointment.getServices()) {
+                totalRevenue += service.getPrice();
             }
-
         }
+
         WeeklyPerformanceDTO weeklyPerformanceDTO = WeeklyPerformanceDTO.builder()
                 .totalRevenue(totalRevenue)
                 .totalCancelledServices(totalCancelledServices)
-                .totalScheduledServices(totalScheduledServices)
+                .totalScheduledServices(totalSheduledOrConfirmed)
                 .build();
 
 
