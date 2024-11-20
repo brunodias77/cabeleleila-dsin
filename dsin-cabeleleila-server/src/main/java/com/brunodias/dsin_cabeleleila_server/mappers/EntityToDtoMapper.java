@@ -8,6 +8,7 @@ import com.brunodias.dsin_cabeleleila_server.entities.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -15,7 +16,7 @@ public class EntityToDtoMapper {
 
     public static UserDTO mapUserToDtoBasic(User user) {
         // Criação de DTO básico para o usuário
-        return new UserDTO(user.getEmail(),user.getName(), user.getPhoneNumber());
+        return new UserDTO(user.getEmail(), user.getName(), user.getPhoneNumber(),  user.getRoles());
     }
 
     public static AppointmentDetailsDTO mapAppointmentToDtoBasic(Appointment appointment) {
@@ -29,7 +30,6 @@ public class EntityToDtoMapper {
                 appointment.getAppointmentDate(),
                 appointment.getAppointmentTime(),
                 appointment.getStatus(),
-                serviceDTOList
-        );
+                serviceDTOList);
     }
 }

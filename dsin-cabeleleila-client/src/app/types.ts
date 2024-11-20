@@ -1,3 +1,17 @@
+interface Role {
+  id: string;
+  createdDate: string; // ou Date se for convertido
+  updatedDate: string | null;
+  name: string;
+}
+export interface UserDetails {
+  data: {
+    email: string;
+    name: string;
+    phoneNumber: string;
+    role: Role[];
+  };
+}
 export interface Service {
   id: string;
   serviceName: string;
@@ -10,6 +24,12 @@ export interface Appointment {
   appointmentTime: string;
   status: string;
   services: Service[];
+}
+
+export interface AppointmentAdmin {
+  status: number; // Status HTTP da resposta (por exemplo: 200)
+  timestamp: string; // Timestamp da resposta
+  data: Appointment[]; // Lista de agendamentos
 }
 
 export interface ServiceModal {
@@ -28,6 +48,16 @@ export interface RequestUpadateAppointment {
   serviceId: string[];
   appointmentTime: string;
   appointmentDate: string;
+}
+export interface RequestUpadateAppointmentAdmin {
+  serviceId: string[];
+  appointmentTime: string;
+  appointmentDate: string;
+}
+
+export interface RequestWeeklyPerformanceAdmin {
+  startDate: string;
+  endDate: string;
 }
 
 export interface BaseResponseDTO {

@@ -1,0 +1,87 @@
+<div id="panel-admin" class="w-full h-screen">
+  <div class="max-w-screen-xl mx-auto text-center">
+    <span class="text-gray-900 text-xl text-bold"
+      >Performace Semanal do Salao</span
+    >
+    <div class="mt-8 flex items-center justify-center gap-2">
+      <label for="startDate" class="text-gray-700">Data Início: </label>
+      <input
+        type="date"
+        id="startDate"
+        [(ngModel)]="startDate"
+        class="border border-gray-300 rounded px-2 py-1 ml-2"
+      />
+
+      <label for="endDate" class="ml-4 text-gray-700">Data Fim: </label>
+      <input
+        type="date"
+        id="endDate"
+        [(ngModel)]="endDate"
+        class="border border-gray-300 rounded px-2 py-1 ml-2"
+      />
+
+      <button
+        (click)="filterDate()"
+        class="ml-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+      >
+        Filtrar
+      </button>
+    </div>
+    <div class="flex items-center justify-center gap-5 mt-[100px]">
+      <div
+        class="p-5 rounded-xl bg-green-500 flex flex-col items-center justify-center"
+      >
+        <span class="">Total de Serviços Agendados</span>
+        <span class="text-xl font-bold">{{
+          WeeklyPerformance?.totalScheduledServices
+        }}</span>
+      </div>
+      <div
+        class="p-5 rounded-xl bg-red-500 flex flex-col items-center justify-center"
+      >
+        <span class="">Total de Serviços Cancelados</span>
+        <span class="text-xl font-bold">{{
+          WeeklyPerformance?.totalCancelledServices
+        }}</span>
+      </div>
+
+      <div
+        class="p-5 rounded-xl bg-green-500 flex flex-col items-center justify-center"
+      >
+        <span class="">Projecao de lucro semanal</span>
+        <span class="text-xl font-bold">
+          R$ {{ WeeklyPerformance?.totalRevenue }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <section id="panel-admin" class="w-full h-screen">
+  <div class="max-w-screen-xl mx-auto text-center grid grid-cols-3 gap-32">
+    <div
+      class="p-5 rounded-xl bg-green-500 flex flex-col items-center justify-center"
+    >
+      <span class="">Total de Serviços Agendados</span>
+      <span class="text-xl font-bold">{{
+        WeeklyPerformance?.totalScheduledServices
+      }}</span>
+    </div>
+    <div
+      class="p-5 rounded-xl bg-red-500 flex flex-col items-center justify-center"
+    >
+      <span class="">Total de Serviços Cancelados</span>
+      <span class="text-xl font-bold">{{
+        WeeklyPerformance?.totalCancelledServices
+      }}</span>
+    </div>
+    <div
+      class="p-5 rounded-xl bg-green-500 flex flex-col items-center justify-center"
+    >
+      <span class="">Projecao de lucro semanal</span>
+      <span class="text-xl font-bold">
+        R$ {{ WeeklyPerformance?.totalRevenue }}</span
+      >
+    </div>
+  </div>
+</section> -->

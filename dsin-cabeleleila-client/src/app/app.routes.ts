@@ -5,6 +5,7 @@ import { RegisterComponent } from './modules/authentication/register/register.co
 import { ProfileComponent } from './modules/user/profile/profile.component';
 import { authGuard } from './guards/auth.guard';
 import { PainelComponent } from './modules/admin/painel/painel.component';
+import { WeeklyPerformanceComponent } from './modules/admin/painel/weekly-performance/weekly-performance.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,7 +13,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent },
   { path: 'painel', component: PainelComponent },
-  { path: 'painel/admin/performance', component: PainelComponent },
+  { path: 'painel/admin/performance', component: WeeklyPerformanceComponent },
   { path: 'painel/admin/create-service', component: PainelComponent },
   { path: 'painel/admin/appointments', component: PainelComponent },
 ];

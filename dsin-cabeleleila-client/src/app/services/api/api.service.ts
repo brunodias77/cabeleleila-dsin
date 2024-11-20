@@ -3,9 +3,12 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, of, throwError } from 'rxjs';
 import {
   Appointment,
+  AppointmentAdmin,
   BaseResponseDTO,
   RequestCreateAppointment,
   RequestUpadateAppointment,
+  RequestUpadateAppointmentAdmin,
+  RequestWeeklyPerformanceAdmin,
 } from '../../types';
 
 @Injectable({
@@ -80,6 +83,19 @@ export class ApiService {
       })
     );
   }
+  updateAppointmentAdmin(
+    appointmentId: string,
+    appointment: RequestUpadateAppointmentAdmin
+  ): Observable<BaseResponseDTO> {
+    const url = `${ApiService.API_URL}/admin/update-appointment/${appointmentId}`;
+    const headers = this.getAuthHeaders();
+    return this.http.put<BaseResponseDTO>(url, appointment, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error updating appointment:', error);
+        return throwError(() => new Error('Falha ao atualizar o compromisso.'));
+      })
+    );
+  }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -92,10 +108,20 @@ export class ApiService {
     });
   }
 
-  getPerformaceData(): Observable<any> {
+  getPerformaceData(request: RequestWeeklyPerformanceAdmin): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(`${ApiService.API_URL}/admin/performace`, {
+    return this.http.post(`${ApiService.API_URL}/admin/performace`, request, {
       headers,
     });
+  }
+
+  getAllAppointmentsAdmin(): Observable<AppointmentAdmin> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<AppointmentAdmin>(
+      `${ApiService.API_URL}/admin/all-appointments`,
+      {
+        headers,
+      }
+    );
   }
 }

@@ -14,5 +14,5 @@ import java.math.BigDecimal;
 public class WeeklyPerformanceDTO {
     private int totalScheduledServices;
     private int totalCancelledServices;
-    private BigDecimal totalRevenue;
+    private Double totalRevenue;
 }
