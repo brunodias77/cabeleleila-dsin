@@ -30,10 +30,10 @@ export class WeeklyPerformanceComponent implements OnInit {
   setWeekDates() {
     const currentDate = new Date();
 
-    const startOfWeekDate = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const startOfWeekDate = startOfWeek(currentDate, { weekStartsOn: 0 });
     this.startDate = this.formatDate(startOfWeekDate);
 
-    const endOfWeekDate = endOfWeek(currentDate, { weekStartsOn: 1 });
+    const endOfWeekDate = endOfWeek(currentDate, { weekStartsOn: 0 });
     this.endDate = this.formatDate(endOfWeekDate);
   }
 

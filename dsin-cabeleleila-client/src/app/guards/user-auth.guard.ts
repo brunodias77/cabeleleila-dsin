@@ -1,25 +1,21 @@
-import { CanActivateFn } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
 
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
-
-export class UserAuthGuard implements CanActivate {
+@Injectable({
+  providedIn: 'root',
+})
+export class ProfileGuard implements CanActivate {
   constructor(private router: Router) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
+  canActivate(): boolean {
     const role = localStorage.getItem('role');
-    if (role === 'ROLE_USER') {
-      return true;
-    } else {
-      this.router.navigate(['/unauthorized']);
+
+    // Verifica se a role está ausente ou é "ROLE_ADMIN"
+    if (!role || role === 'ROLE_ADMIN') {
+      this.router.navigate(['/unauthorized']); // Redireciona para a página não autorizada
       return false;
     }
+
+    return true; // Permite acesso se não for "ROLE_ADMIN"
   }
 }
