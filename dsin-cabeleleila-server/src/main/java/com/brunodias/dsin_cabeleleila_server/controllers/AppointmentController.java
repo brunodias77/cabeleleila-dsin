@@ -5,7 +5,7 @@ import com.brunodias.dsin_cabeleleila_server.dtos.AppointmentDetailsDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.BaseResponseDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestCreateAppointment;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestUpdateAppointment;
-import com.brunodias.dsin_cabeleleila_server.useCases.appointments.GetAllUserAppointment.GetAllUserAppointmentUseCase;
+import com.brunodias.dsin_cabeleleila_server.useCases.appointments.GetAllUserAppointment.GetAllUserAppointmentsUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.appointments.UpdateAppointment.UpdateAppointmentUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.appointments.cancelAppointment.CancelAppointmentUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.appointments.createAppointment.CreateAppointmentUseCase;
@@ -32,7 +32,7 @@ import java.util.UUID;
 @Transactional
 public class AppointmentController {
 
-    private final GetAllUserAppointmentUseCase _getAllUserAppointmentUseCase;
+    private final GetAllUserAppointmentsUseCase _getAllUserAppointmentsUseCase;
     private final UpdateAppointmentUseCase _updateAppointmentUseCase;
     private final CreateAppointmentUseCase _createAppointmentUseCase;
     private final CancelAppointmentUseCase _cancelAppointmentUseCase;
@@ -69,9 +69,9 @@ public class AppointmentController {
             }),
             @ApiResponse(responseCode = "404", description = "Nenhum agendamento encontrado")
     })
-    public ResponseEntity<List<AppointmentDetailsDTO>> getAllUserAppointment() {
+    public ResponseEntity getAllUserAppointment() {
         try {
-            var appointments = this._getAllUserAppointmentUseCase.execute();
+            var appointments = this._getAllUserAppointmentsUseCase.execute();
             return ResponseEntity.ok(appointments);
         } catch (Exception err) {
             return ResponseEntity.status(404).body(null);

@@ -33,7 +33,6 @@ public class Appointment extends BaseEntity {
     private LocalTime appointmentTime;
 
     @Column(nullable = false)
-
     private LocalDate appointmentDate;
 
     @Enumerated(EnumType.STRING)

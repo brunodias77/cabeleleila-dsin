@@ -32,6 +32,7 @@ public class GetAllUserAppointmentsUseCase implements IGetAllUserAppointmentUseC
                         appointment.getStatus(),
                         appointment.getServices().stream()
                                 .map(service -> new ServiceDTO(
+                                        service.getId(),
                                         service.getName(),
                                         service.getPrice()))
                                 .collect(Collectors.toList())

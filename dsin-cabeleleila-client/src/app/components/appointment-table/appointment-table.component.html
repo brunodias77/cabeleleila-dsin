@@ -10,24 +10,18 @@
     </tr>
   </thead>
   <tbody class="text-gray-600 divide-y">
-    <tr *ngFor="let appointment of appointments">
+    <tr *ngFor="let service of appointment!.services">
       <td class="whitespace-nowrap">
-        <ng-container *ngFor="let service of appointment.services">
-          {{ service.serviceName }}
-        </ng-container>
+        {{ service.serviceName }}
       </td>
-      <td class="whitespace-nowrap">{{ appointment.appointmentDate }}</td>
-      <td class="whitespace-nowrap">{{ appointment.appointmentTime }}</td>
+      <td class="whitespace-nowrap">{{ appointment!.appointmentDate }}</td>
+      <td class="whitespace-nowrap">{{ appointment!.appointmentTime }}</td>
       <td class="whitespace-nowrap">
-        <span [ngClass]="statusClasses(appointment.status)">
-          {{ appointment.status }}
+        <span [ngClass]="statusClasses(appointment!.status)">
+          {{ appointment!.status }}
         </span>
       </td>
-      <td class="whitespace-nowrap">
-        <ng-container *ngFor="let service of appointment.services">
-          R$ {{ service.servicePrice }},00
-        </ng-container>
-      </td>
+      <td class="whitespace-nowrap">R$ {{ service.servicePrice }},00</td>
       <td class="py-2 flex items-center justify-center gap-4">
         <app-button
           label="Alterar"
@@ -43,6 +37,3 @@
     </tr>
   </tbody>
 </table>
-
-
-

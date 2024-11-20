@@ -1,8 +1,40 @@
-<app-appointment-table
-  [appointments]="appointments"
-  (onUpdate)="updateAppointmentAdmin($event)"
-  (onDelete)="cancelAppointmentAdmin($event)"
-></app-appointment-table>
+<h1 class="text-bold text-gray-800 text-center mb-[100px]">
+  Todos os Agendamentos
+</h1>
+
+<ng-container *ngIf="appointments.length; else emptyState">
+  <div
+    *ngFor="let appointment of appointments"
+    class="border border-green-500 rounded-md p-4 mb-8"
+  >
+    <!-- Cabeçalho do item -->
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg text-green-500 font-bold">
+        {{ appointment.appointmentDate }}
+      </h3>
+      <button
+        (click)="toggleTable(appointment.id)"
+        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none"
+      >
+        {{ appointment.showTable ? "Ocultar" : "Ver Mais" }}
+      </button>
+    </div>
+
+    <!-- Tabela -->
+    <div *ngIf="appointment.showTable" class="mt-4">
+      <app-appointment-table
+        [appointment]="appointment"
+        (onUpdate)="updateAppointmentAdmin($event)"
+        (onDelete)="cancelAppointmentAdmin($event)"
+      ></app-appointment-table>
+    </div>
+  </div>
+</ng-container>
+<ng-template #emptyState>
+  <div class="text-white h-screen flex items-center justify-center">
+    <span>Você ainda não possui agendamentos na Cabeleleila Leila</span>
+  </div>
+</ng-template>
 
 <app-appointment-modal
   *ngIf="modalUpdateAppointmentIsOpen"
@@ -50,7 +82,7 @@
             value="11:00"
             class="hidden peer"
             name="timetable"
-            [(ngModel)]="appointmentUpdate_serviceId"
+            [(ngModel)]="appointmentUpdate_time"
           />
           <label
             for="11-am"
@@ -68,7 +100,7 @@
             class="hidden peer"
             name="timetable"
             checked
-            [(ngModel)]="appointmentUpdate_serviceId"
+            [(ngModel)]="appointmentUpdate_time"
           />
           <label
             for="12-am"
@@ -85,7 +117,7 @@
             value="14:00"
             class="hidden peer"
             name="timetable"
-            [(ngModel)]="appointmentUpdate_serviceId"
+            [(ngModel)]="appointmentUpdate_time"
           />
           <label
             for="2-pm"
@@ -102,7 +134,7 @@
             value="15:00"
             class="hidden peer"
             name="timetable"
-            [(ngModel)]="appointmentUpdate_serviceId"
+            [(ngModel)]="appointmentUpdate_time"
           />
           <label
             for="3-pm"
@@ -119,7 +151,7 @@
             value="16:00"
             class="hidden peer"
             name="timetable"
-            [(ngModel)]="appointmentUpdate_serviceId"
+            [(ngModel)]="appointmentUpdate_time"
           />
           <label
             for="4-pm"
@@ -139,12 +171,40 @@
         id="services"
         name="services"
         class="w-full border border-gray-300 rounded px-3 py-2"
-        [(ngModel)]="appointmentUpdate_serviceId"
+        [(ngModel)]="newOption"
       >
         <option *ngFor="let service of services" [value]="service.id">
           {{ service.name }} - R$ {{ service.price }}
         </option>
       </select>
+    </div>
+
+    <button
+      type="button"
+      class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+      (click)="addOption(newOption)"
+      [disabled]="!newOption"
+    >
+      Adicionar Serviço
+    </button>
+
+    <div class="mt-4">
+      <p *ngIf="selectedOptions.length > 0" class="font-bold mb-2">
+        Selecionados:
+      </p>
+      <div
+        *ngFor="let option of selectedOptions"
+        class="flex items-center mb-2"
+      >
+        <span class="mr-2">{{ getServiceName(option) }}</span>
+        <button
+          type="button"
+          class="text-red-500 hover:text-red-600 font-bold"
+          (click)="removeOption(option)"
+        >
+          Remover
+        </button>
+      </div>
     </div>
 
     <div class="mt-6 flex justify-end space-x-4">

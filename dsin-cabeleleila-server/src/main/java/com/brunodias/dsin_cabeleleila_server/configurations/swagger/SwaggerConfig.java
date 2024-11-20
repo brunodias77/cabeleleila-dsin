@@ -13,11 +13,13 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .info(new Info().title("Template Auth Jwt").description("API que serve com base para projetos futuros").version("1"))
+                .info(new Info().title("Template Auth Jwt").description("API que serve com base para projetos futuros")
+                        .version("1"))
                 .schemaRequirement("jwt_auth", creaSecurityScheme());
     }
 
     private SecurityScheme creaSecurityScheme() {
-        return new SecurityScheme().name("jwt_auth").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT");
+        return new SecurityScheme().name("jwt_auth").type(SecurityScheme.Type.HTTP).scheme("bearer")
+                .bearerFormat("JWT");
     }
 }

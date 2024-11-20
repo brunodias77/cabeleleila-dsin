@@ -13,11 +13,11 @@ import { UserDetails } from '../../types';
 export class HeaderComponent implements OnInit {
   username = '';
   isAdmin = false;
+
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.apiService.getUserDetails().subscribe((data: UserDetails) => {
-      console.log(data);
       var role = localStorage.getItem('role');
       if (data.data.role[0].name === 'ROLE_ADMIN') {
         this.isAdmin = true;

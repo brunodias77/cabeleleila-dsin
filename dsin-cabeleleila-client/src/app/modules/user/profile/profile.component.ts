@@ -48,7 +48,7 @@ export class ProfileComponent implements OnInit {
   appointments: Appointment[] = [];
   today = this.getTodayDate();
   newOption: string | null = null;
-  newServiceIdAppointmentUpdate: string = '';
+  newServiceIdAppointmentUpdate: string[] = [];
   newDateAppointmentUpdate: string = '';
   newSelectedTimeAppointmentUpdate: string = '';
   newAppointmentIdUpdate: string = '';
@@ -116,14 +116,20 @@ export class ProfileComponent implements OnInit {
 
   private loadServices(): void {
     this.apiService.getDataServices().subscribe({
-      next: (response) => (this.services = response.data),
+      next: (response) => {
+        this.services = response.data;
+        console.log('Serviços', this.services);
+      },
       error: (err) => console.error('Erro ao carregar serviços:', err),
     });
   }
 
   private loadAppointments(): void {
     this.apiService.getAllAppointments().subscribe({
-      next: (appointments) => (this.appointments = appointments),
+      next: (appointments) => {
+        this.appointments = appointments.data;
+        console.log('Appointments', this.appointments);
+      },
       error: (err) => console.error('Erro ao carregar agendamentos:', err),
     });
   }
@@ -276,10 +282,20 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  toggleTable(appointmentId: string) {
+    const appointment = this.appointments.find((i) => i.id === appointmentId);
+    if (appointment) {
+      appointment.showTable = !appointment.showTable;
+    }
+  }
+
   updateAppointment(appointment: Appointment): void {
-    this.newServiceIdAppointmentUpdate = appointment.services[0].id;
+    this.newServiceIdAppointmentUpdate = appointment.services.map(
+      (service) => service.id
+    );
     this.newDateAppointmentUpdate = appointment.appointmentDate;
     this.newAppointmentIdUpdate = appointment.id;
+    this.selectedOptions = appointment.services.map((service) => service.id);
 
     const appointmentDate = parseISO(appointment.appointmentDate);
     const twoDaysBefore = new Date(appointmentDate);
@@ -300,15 +316,14 @@ export class ProfileComponent implements OnInit {
 
   async handleUpdateSubmit(event: Event): Promise<void> {
     event.preventDefault();
+    this.newServiceIdAppointmentUpdate = this.selectedOptions;
     const appointment: RequestUpadateAppointment = {
-      serviceId: [this.newServiceIdAppointmentUpdate],
+      serviceId: this.newServiceIdAppointmentUpdate,
       appointmentDate: this.newDateAppointmentUpdate,
       appointmentTime: this.newSelectedTimeAppointmentUpdate,
     };
 
-    console.log('Tentando fazer o update');
     console.log('appointment', appointment);
-    console.log('newAppointmentIdUpdate', this.newAppointmentIdUpdate);
 
     await this.fetchWithLoading(
       () =>

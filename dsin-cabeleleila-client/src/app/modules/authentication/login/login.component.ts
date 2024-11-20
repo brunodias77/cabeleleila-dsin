@@ -4,11 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../../services/api/api.service';
 import { firstValueFrom } from 'rxjs';
-import { ToastComponent } from '../../../components/ui/toast/toast.component';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ToastComponent],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -32,10 +31,14 @@ export class LoginComponent {
         this.apiService.loginUser(this.formData)
       );
       if (response.status === 200) {
-        this.showMessage('User Successfully logged in');
+        this.showMessage('Usuario logado com sucesso');
         localStorage.setItem('token', response.jwt);
         localStorage.setItem('role', response.role);
-        this.router.navigate(['/profile']);
+        if (response.role === 'ROLE_ADMIN') {
+          this.router.navigate(['/painel']);
+        } else {
+          this.router.navigate(['/profile']);
+        }
       }
     } catch (error: any) {
       this.showMessage(

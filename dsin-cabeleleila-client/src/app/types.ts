@@ -24,6 +24,7 @@ export interface Appointment {
   appointmentTime: string;
   status: string;
   services: Service[];
+  showTable: boolean;
 }
 
 export interface AppointmentAdmin {
