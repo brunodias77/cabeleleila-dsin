@@ -17,7 +17,6 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [ProfileGuard],
   },
   { path: 'painel', component: PainelComponent, canActivate: [AdminAuthGuard] },
   { path: 'unauthorized', component: UnauthorizedComponent },
