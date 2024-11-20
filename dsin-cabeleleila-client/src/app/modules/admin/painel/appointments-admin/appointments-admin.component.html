@@ -22,19 +22,43 @@
 
     <!-- Tabela -->
     <div *ngIf="appointment.showTable" class="mt-4">
-      <app-appointment-table
+      <app-appointment-table-admin
         [appointment]="appointment"
         (onUpdate)="updateAppointmentAdmin($event)"
         (onDelete)="cancelAppointmentAdmin($event)"
-      ></app-appointment-table>
+        (onConfirm)="confirmAppointmentAdmin($event)"
+      ></app-appointment-table-admin>
     </div>
   </div>
 </ng-container>
 <ng-template #emptyState>
-  <div class="text-white h-screen flex items-center justify-center">
-    <span>Você ainda não possui agendamentos na Cabeleleila Leila</span>
+  <div class="text-gray-700 h-screen flex items-center justify-center">
+    <span>Não existe nenhum agendamento no momento</span>
   </div>
 </ng-template>
+
+<div
+  *ngIf="showAlert"
+  class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+>
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+    <p class="text-lg">{{ alertMessage }}</p>
+    <div class="mt-4 flex justify-between gap-5">
+      <button
+        (click)="confirmAlert()"
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+      >
+        Sim
+      </button>
+      <button
+        (click)="cancelAlert()"
+        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+      >
+        Não
+      </button>
+    </div>
+  </div>
+</div>
 
 <app-appointment-modal
   *ngIf="modalUpdateAppointmentIsOpen"

@@ -1,6 +1,5 @@
 package com.brunodias.dsin_cabeleleila_server.useCases.admin.createServiceAdmin;
 
-
 import com.brunodias.dsin_cabeleleila_server.dtos.BaseResponseDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestCreateServiceAdmin;
 import com.brunodias.dsin_cabeleleila_server.entities.Service;
@@ -17,10 +16,18 @@ public class CreateServiceAdminUseCase implements ICreateServiceAdminUseCase {
     @Override
     @Transactional
     public BaseResponseDTO execute(RequestCreateServiceAdmin request) {
+        // Validação do nome
         if (request.getName() == null || request.getName().isBlank()) {
             return BaseResponseDTO.builder()
                     .status(400)
                     .message("O nome do serviço é obrigatório.")
+                    .build();
+        }
+
+        if (serviceRepository.existsByName(request.getName())) {
+            return BaseResponseDTO.builder()
+                    .status(409)
+                    .message("Já existe um serviço com o nome informado.")
                     .build();
         }
 
@@ -31,6 +38,7 @@ public class CreateServiceAdminUseCase implements ICreateServiceAdminUseCase {
                     .build();
         }
 
+        // Criar o novo serviço
         Service newService = Service.builder()
                 .name(request.getName())
                 .description(request.getDescription())

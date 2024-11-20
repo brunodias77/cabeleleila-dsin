@@ -37,7 +37,7 @@
         class="mt-3 md:mt-0"
         (click)="openModal()"
         label="Agendar um horário"
-        color="success"
+        color="confirm"
       ></app-button>
     </div>
     <div class="mt-12">
@@ -64,7 +64,7 @@
             <app-appointment-table
               [appointment]="appointment"
               (onUpdate)="updateAppointment($event)"
-              (onDelete)="cancelAppointment($event)"
+              (onDelete)="testeAlert($event)"
             ></app-appointment-table>
           </div>
         </div>

@@ -53,9 +53,9 @@ export class ProfileComponent implements OnInit {
   newSelectedTimeAppointmentUpdate: string = '';
   newAppointmentIdUpdate: string = '';
   selectedTime: string = '12:00 AM';
-  showAlert = false;
-  alertMessage = '';
-  alertResponse: boolean = false;
+  showAlert: boolean = false;
+  alertMessage: string = '';
+  alertResponse: boolean | null = null;
   filteredAppointments: Appointment[] = [];
   startDateFilterAppointments: string = '';
   endDateFilterAppointments: string = '';
@@ -254,13 +254,14 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  cancelAppointment(appointment: Appointment): void {
-    const result = confirm('Deseja realmente cancelar o agendamento?');
-    if (result) {
+  async cancelAppointment(appointment: Appointment): Promise<void> {
+    const userConfirmed = await this.showAlertAsync(
+      'Tem certeza que deseja cancelar este agendamento?'
+    );
+    if (userConfirmed) {
       const appointmentDate = parseISO(appointment.appointmentDate);
       const twoDaysBefore = new Date(appointmentDate);
       twoDaysBefore.setDate(appointmentDate.getDate() - 2);
-
       // Verifica se a data atual é maior que a data limite (2 dias antes do agendamento)
       if (new Date() > twoDaysBefore) {
         alert(
@@ -343,5 +344,35 @@ export class ProfileComponent implements OnInit {
         alert('Erro ao atualizar o agendamento.');
       }
     );
+  }
+
+  async testeAlert(appointment: Appointment) {
+    const userConfirmed = await this.showAlertAsync(
+      'Tem certeza que deseja cancelar este agendamento?'
+    );
+    if (userConfirmed) {
+      alert('Usuário confirmou');
+    } else {
+      alert('Usuário cancelou');
+    }
+  }
+
+  showAlertAsync(message: string): Promise<boolean> {
+    this.alertMessage = message;
+    this.showAlert = true;
+
+    return new Promise((resolve, reject) => {
+      this.confirmAlert = () => {
+        this.showAlert = false;
+        this.alertResponse = true;
+        resolve(true); // Resolve com "Sim"
+      };
+
+      this.cancelAlert = () => {
+        this.showAlert = false;
+        this.alertResponse = false;
+        resolve(false); // Resolve com "Não"
+      };
+    });
   }
 }

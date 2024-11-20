@@ -2,12 +2,11 @@ package com.brunodias.dsin_cabeleleila_server.controllers;
 
 import com.brunodias.dsin_cabeleleila_server.dtos.AppointmentDetailsDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.BaseResponseDTO;
-import com.brunodias.dsin_cabeleleila_server.dtos.WeeklyPerformanceDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestCreateServiceAdmin;
-import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestUpdateAppointment;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestUpdateAppointmentAdmin;
 import com.brunodias.dsin_cabeleleila_server.dtos.requests.RequestWeeklyPerformaceAdmin;
 import com.brunodias.dsin_cabeleleila_server.useCases.admin.cancelAppointmentAdmin.CancelAppointmentAdminUseCase;
+import com.brunodias.dsin_cabeleleila_server.useCases.admin.confirmAppointment.ConfirmAppointmentAdminUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.admin.createServiceAdmin.CreateServiceAdminUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.admin.getAllAppointments.GetAllAppointmentsUseCase;
 import com.brunodias.dsin_cabeleleila_server.useCases.admin.updateAppointmentAdmin.UpdateAppointmentAdminUseCase;
@@ -35,6 +34,7 @@ public class AdminController {
     private final UpdateAppointmentAdminUseCase _updateAppointmentAdminUseCase;
     private final CancelAppointmentAdminUseCase _cancelAppointmentAdminUseCase;
     private final CreateServiceAdminUseCase _createServiceAdminUseCase;
+    private final ConfirmAppointmentAdminUseCase _confirmAppointmentAdminUseCase;
     @GetMapping("/all-appointments")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Listar Agendamentos", description = "Rota excluvisa para administradores para listar todos os agendamentos.")
@@ -94,6 +94,17 @@ public class AdminController {
     public ResponseEntity createServiceAdmin(@RequestBody RequestCreateServiceAdmin request){
         try{
             var response = _createServiceAdminUseCase.execute(request);
+            return ResponseEntity.status(200).body(response);
+        }catch (Exception e){
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PutMapping("/confirm-appointment/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity confirmAppointmentAdmin(@PathVariable UUID id){
+        try{
+            var response = _confirmAppointmentAdminUseCase.execute(id);
             return ResponseEntity.status(200).body(response);
         }catch (Exception e){
             return ResponseEntity.status(500).build();

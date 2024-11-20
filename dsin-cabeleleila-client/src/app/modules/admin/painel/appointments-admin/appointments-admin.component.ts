@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppointmentTableComponent } from '../../../../components/appointment-table/appointment-table.component';
 import {
+  AppointDetailsAdmin,
   Appointment,
   AppointmentAdmin,
   RequestUpadateAppointmentAdmin,
@@ -14,12 +15,14 @@ import { CommonModule } from '@angular/common';
 import { AppointmentModalComponent } from '../../../../components/appointment-modal/appointment-modal.component';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
+import { AppointmentTableAdminComponent } from '../../../../components/appointment-table-admin/appointment-table-admin.component';
 
 @Component({
   selector: 'app-appointments-admin',
   standalone: true,
   imports: [
     AppointmentTableComponent,
+    AppointmentTableAdminComponent,
     CommonModule,
     AppointmentModalComponent,
     FormsModule,
@@ -29,7 +32,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
   styleUrl: './appointments-admin.component.scss',
 })
 export class AppointmentsAdminComponent implements OnInit {
-  appointments: Appointment[] = [];
+  appointments: AppointDetailsAdmin[] = [];
   appointmentUpdate_serviceId: string[] = [];
   appointmentUpdate_date: string = '';
   appointmentUpdate_time: string = '';
@@ -40,6 +43,9 @@ export class AppointmentsAdminComponent implements OnInit {
   isLoading = false;
   newOption: string | null = null;
   selectedOptions: string[] = [];
+  showAlert: boolean = false;
+  alertMessage: string = '';
+  alertResponse: boolean | null = null;
 
   constructor(private apiService: ApiService) {}
   ngOnInit(): void {
@@ -60,6 +66,15 @@ export class AppointmentsAdminComponent implements OnInit {
     );
   }
 
+  confirmAlert() {
+    this.alertResponse = true;
+    this.showAlert = false;
+  }
+  cancelAlert() {
+    this.alertResponse = false;
+    this.showAlert = false;
+  }
+
   getServiceName(optionId: string): string {
     const service = this.services.find((service) => service.id === optionId);
     return service ? service.name : 'Serviço não encontrado';
@@ -73,6 +88,25 @@ export class AppointmentsAdminComponent implements OnInit {
   }
   private getTodayDate(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  showAlertAsync(message: string): Promise<boolean> {
+    this.alertMessage = message;
+    this.showAlert = true;
+
+    return new Promise((resolve, reject) => {
+      this.confirmAlert = () => {
+        this.showAlert = false;
+        this.alertResponse = true;
+        resolve(true); // Resolve com "Sim"
+      };
+
+      this.cancelAlert = () => {
+        this.showAlert = false;
+        this.alertResponse = false;
+        resolve(false); // Resolve com "Não"
+      };
+    });
   }
 
   private loadServices(): void {
@@ -136,7 +170,42 @@ export class AppointmentsAdminComponent implements OnInit {
     this.openUpdateAppointmentModal();
   }
 
-  cancelAppointmentAdmin(appointment: Appointment) {}
+  async confirmAppointmentAdmin(appointment: Appointment) {
+    const userConfirmed = await this.showAlertAsync(
+      'Tem certeza que deseja confirmar este agendamento?'
+    );
+    if (userConfirmed) {
+      this.fetchWithLoading(
+        () =>
+          firstValueFrom(
+            this.apiService.confirmAppointmentAdmin(appointment.id)
+          ),
+        () => {
+          this.getAppointmentsAdmin();
+          alert('Agendamento confirmado com sucesso.');
+        },
+        () => alert('Erro ao confirmar o agendamento.')
+      );
+    }
+  }
+  async cancelAppointmentAdmin(appointment: Appointment) {
+    const userConfirmed = await this.showAlertAsync(
+      'Tem certeza que deseja cancelar este agendamento?'
+    );
+    if (userConfirmed) {
+      this.fetchWithLoading(
+        () =>
+          firstValueFrom(
+            this.apiService.cancelAppointmentAdmin(appointment.id)
+          ),
+        () => {
+          this.getAppointmentsAdmin();
+          alert('Agendamento cancelado com sucesso.');
+        },
+        () => alert('Erro ao cancelar o agendamento.')
+      );
+    }
+  }
 
   openUpdateAppointmentModal(): void {
     this.modalUpdateAppointmentIsOpen = true;

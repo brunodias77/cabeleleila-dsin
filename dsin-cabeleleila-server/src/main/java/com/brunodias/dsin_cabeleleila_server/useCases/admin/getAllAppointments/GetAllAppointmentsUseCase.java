@@ -1,5 +1,6 @@
 package com.brunodias.dsin_cabeleleila_server.useCases.admin.getAllAppointments;
 
+import com.brunodias.dsin_cabeleleila_server.dtos.AppointmentDetailsAdminDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.AppointmentDetailsDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.BaseResponseDTO;
 import com.brunodias.dsin_cabeleleila_server.dtos.ServiceDTO;
@@ -24,8 +25,8 @@ public class GetAllAppointmentsUseCase implements IGetAllAppointmentsUseCase {
     public BaseResponseDTO execute() {
         List<Appointment> appointments = _appointmentRepository.findAll();
 
-        List<AppointmentDetailsDTO> appointmentDetails = appointments.stream()
-                .map(appointment -> new AppointmentDetailsDTO(
+        List<AppointmentDetailsAdminDTO> appointmentDetails = appointments.stream()
+                .map(appointment -> new AppointmentDetailsAdminDTO(
                         appointment.getId(),
                         appointment.getAppointmentDate(),
                         appointment.getAppointmentTime(),
@@ -35,9 +36,13 @@ public class GetAllAppointmentsUseCase implements IGetAllAppointmentsUseCase {
                                         service.getId(),
                                         service.getName(),
                                         service.getPrice()))
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toList()),
+                        appointment.getClient().getName(), // Aqui, estamos acessando o nome do cliente
+                        appointment.getClient().getEmail(),
+                        appointment.getClient().getPhoneNumber()
                 ))
                 .collect(Collectors.toList());
+
 
         return  BaseResponseDTO.builder().status(200).data(appointmentDetails).build();
 
