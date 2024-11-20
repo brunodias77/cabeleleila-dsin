@@ -8,14 +8,11 @@ export class AdminAuthGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(): boolean {
-    const role = localStorage.getItem('role'); // Obtém o valor da role no localStorage
-
-    // Verifica se a role é "ROLE_ADMIN"
+    const role = localStorage.getItem('role');
     if (role === 'ROLE_ADMIN') {
-      return true; // Permite o acesso à rota
+      return true;
     }
 
-    // Caso contrário, redireciona para uma página de erro ou login
     this.router.navigate(['/unauthorized']);
     return false;
   }

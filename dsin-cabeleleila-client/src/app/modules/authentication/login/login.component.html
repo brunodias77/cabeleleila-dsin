@@ -16,21 +16,33 @@
         >
           Entre na sua conta
         </h1>
-        <form class="space-y-4 md:space-y-6" (ngSubmit)="handleSubmit()">
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="handleSubmit()"
+          class="space-y-4 md:space-y-6"
+        >
           <div>
             <label for="email" class="block mb-2 text-sm font-medium text-white"
               >Email</label
             >
             <input
               type="email"
-              name="email"
+              formControlName="email"
               id="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="name@company.com"
-              required=""
-              [(ngModel)]="formData.email"
             />
+            <div
+              *ngIf="
+                loginForm.get('email')?.invalid &&
+                loginForm.get('email')?.touched
+              "
+              class="text-red-500 text-xs mt-1"
+            >
+              Email inválido
+            </div>
           </div>
+
           <div>
             <label
               for="password"
@@ -39,24 +51,33 @@
             >
             <input
               type="password"
-              name="password"
+              formControlName="password"
               id="password"
               placeholder="••••••••"
               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required=""
-              [(ngModel)]="formData.password"
             />
+            <div
+              *ngIf="
+                loginForm.get('password')?.invalid &&
+                loginForm.get('password')?.touched
+              "
+              class="text-red-500 text-xs mt-1"
+            >
+              Senha é obrigatória
+            </div>
           </div>
 
           <button
             type="submit"
+            [disabled]="isLoading || loginForm.invalid"
             class="w-full text-[#0b181e] bg-[#7AE186] border-0 py-2.5 px-4 focus:outline-none hover:bg-[#60b268] rounded-lg"
           >
             <ng-container *ngIf="!isLoading; else loadingTemplate">
               Entrar
             </ng-container>
-            <ng-template #loadingTemplate> Processando... </ng-template>
+            <ng-template #loadingTemplate> ... </ng-template>
           </button>
+
           <p class="text-sm font-light text-gray-500 dark:text-gray-400">
             Ainda não tem uma conta?
             <a

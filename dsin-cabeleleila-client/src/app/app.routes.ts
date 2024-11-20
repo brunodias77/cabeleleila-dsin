@@ -8,12 +8,16 @@ import { PainelComponent } from './modules/admin/painel/painel.component';
 import { WeeklyPerformanceComponent } from './modules/admin/painel/weekly-performance/weekly-performance.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { UnauthorizedComponent } from './modules/user/unauthorized/unauthorized.component';
+import { UserAuthGuard } from './guards/user-auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent, canActivate: [authGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [authGuard] },
-  { path: 'profile', component: ProfileComponent },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+  },
   { path: 'painel', component: PainelComponent, canActivate: [AdminAuthGuard] },
   { path: 'unauthorized', component: UnauthorizedComponent },
 ];

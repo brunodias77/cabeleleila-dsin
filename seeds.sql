@@ -3,6 +3,9 @@
 
 
 
+
+
+
 -- Inserir roles com id e created_date especificados
 INSERT INTO roles (id, created_date, name) VALUES
 ('bd2a76d3-484e-4135-b856-130b1b2092fb', CURRENT_TIMESTAMP, 'ROLE_ADMIN'),
@@ -10,8 +13,8 @@ INSERT INTO roles (id, created_date, name) VALUES
 
 -- Inserir usuários
 INSERT INTO users (id, created_date, updated_date, name, phone_number, email, password) VALUES
-('b16e7fe7-6c2f-4416-ae41-3ba3c2aea2a9',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,  'Leila Silva', '+55 11 91234-5678', 'leila@admin.com', '$2a$10$S8eT1HZ.ie1.f5qaMn5fD./sU4f9kBmlHRPVdgxxagbpUP5Ofg8gC'),
-('6c39600a-6139-4cbb-9809-9efd8b1b08f8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Bruno Dias', '+55 11 98765-4321', 'bruno@teste.com', '$2a$10$VNBJtUR0jKT5zHpsmztRD.yy.aIOXJ4fDcpaqe7T43RYFzWo2jRZG');
+('b16e7fe7-6c2f-4416-ae41-3ba3c2aea2a9',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,  'Leila Silva', '+55 11 91234-5678', 'leila@admin.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y'),
+('6c39600a-6139-4cbb-9809-9efd8b1b08f8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Bruno Dias', '+55 11 98765-4321', 'bruno@teste.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y');
 
 
 -- Associar ROLE_ADMIN ao usuário 'Leila Silva'
@@ -41,22 +44,3 @@ INSERT INTO services (id, created_date, name, description, price) VALUES
 (gen_random_uuid(), CURRENT_TIMESTAMP, 'Design de Sobrancelhas', 'Design de sobrancelhas com pinça e modelagem.', 25.0),
 (gen_random_uuid(), CURRENT_TIMESTAMP, 'Maquiagem', 'Maquiagem profissional para eventos.', 120.0);
 
-
-
-
--- Inserir um novo agendamento na tabela "appointments"
-INSERT INTO appointments (id, created_date, updated_date, appointment_date, status, user_id)
-VALUES (gen_random_uuid(), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-11-20', 'AGENDADO', 
-        (SELECT id FROM users WHERE email = 'bruno@teste.com'))
-        
--- Relacionar o agendamento com serviços
-INSERT INTO appointment_service (appointment_id, service_id)
-VALUES 
-(
-    (SELECT id FROM appointments WHERE appointment_date = '2024-11-20' AND user_id = (SELECT id FROM users WHERE email = 'bruno@teste.com')),
-    (SELECT id FROM services WHERE name = 'Corte de Cabelo Masculino')
-),
-(
-    (SELECT id FROM appointments WHERE appointment_date = '2024-11-20' AND user_id = (SELECT id FROM users WHERE email = 'bruno@teste.com')),
-    (SELECT id FROM services WHERE name = 'Hidratação Capilar')
-);
