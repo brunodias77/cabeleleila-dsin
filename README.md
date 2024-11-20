@@ -1,6 +1,6 @@
 # Cabeleleira Leila
 
-Este projeto consiste em uma aplicação fullstack para gerenciamento de um salão de beleza, desenvolvida como parte de um desafio técnico. O sistema inclui um backend para gerenciamento de dados e uma aplicação frontend para interação do usuário.
+Este projeto consiste em uma aplicação para gerenciamento de um salão de beleza, desenvolvida como parte de um desafio técnico para a empresa DSIN Tecnologia da Informação. O sistema inclui um backend para gerenciamento de dados e uma aplicação frontend para interação do usuário.
 
 ## Tecnologias Utilizadas
 
@@ -18,6 +18,61 @@ Este projeto consiste em uma aplicação fullstack para gerenciamento de um sal�
 - **TypeScript**: Linguagem tipada para desenvolvimento frontend.
 - **TailwindCSS**: Framework de CSS utilitário para estilização.
 - **date-fns**: Biblioteca para manipulação de datas.
+
+
+## Pré-requisitos
+Certifique-se de ter instalado:
+
+- #### Docker e Docker Compose.
+- #### Java >= 17.
+- #### Node.js >= 20.x.
+- #### Angular CLI >= 18.x.
+
+## Instalação e Execução
+
+### Clonar o Repositório
+
+```bash
+git clone https://github.com/brunodias77/cabeleleila-dsin.git
+cd cabeleleila-dsin
+```
+
+### Executar Backend
+
+- Acesse o diretório do backend:
+```bash
+cd dsin-cabeleleila-server
+```
+- Execute o serviço usando Docker
+```bash
+docker-compose up -d
+```
+- Rode o backend para criar as tabelas no banco de dados.
+- Execute as queries sql que estão no arquivo seeds.sql para a criação dos usuários leila e bruno e dos serviços do salão.
+### Executar Frontend
+ - Acesse o diretório do frontend:
+```bash
+cd cabeleleila-leila
+```
+- Execute o comando npm install para instalar todos os pacotes necessarios para a aplicação.
+```bash
+npm install
+```
+- Inicie a aplicação com o comando:
+```bash
+ng s
+```
+- Acesse a aplicação em: http://localhost:4200
+
+## Usuários Padrão
+### Apos rodas as queries sql estaram disponiveis esses usuarios
+### Administrador
+- #### E-mail: `leila@admin.com`
+- #### Senha: `123456`
+
+### Client
+- #### E-mail: `bruno@user.com`
+- #### Senha: `123456`
 
 ## Funcionalidades
 
@@ -44,9 +99,6 @@ Este projeto consiste em uma aplicação fullstack para gerenciamento de um sal�
 
 #### Registro de Usuário:
 - **POST** `/auth/register-user`
-
-
-
 
 #### Login de Usuário:
 - **POST** `/auth/login`
@@ -76,56 +128,3 @@ Este projeto consiste em uma aplicação fullstack para gerenciamento de um sal�
     **PUT** `/admin/confirm-appointment/{id}`
 - #### Cancelar Agendamento::
     **PUT** `/admin/cancel-appointment/{id}`
-
-## Pré-requisitos
-Certifique-se de ter instalado:
-
-- #### Docker e Docker Compose.
-- #### Java >= 17.
-- #### Node.js >= 14.x.
-- #### Angular CLI >= 15.x.
-
-## Instalação e Execução
-
-### Clonar o Repositório
-
-```bash
-git https://github.com/brunodias77/cabeleleila-dsin.git
-cd cabeleleila-leila
-```
-
-### Executar Backend
-
-- Acesse o diretório do backend:
-```bash
-cd cabeleleila-leila
-```
-- Execute o serviço usando Docker
-```bash
-docker-compose up -d
-```
-- Execute as queries sql que estão no arquivo seeds.sql.
-### Executar Backend
- - Acesse o diretório do frontend:
-```bash
-cd cabeleleila-leila
-```
-- Execute o comando npm install para instalar todos os pacotes necessarios para a aplicação.
-```bash
-npm install
-```
-- Inicie a aplicação com o comando:
-```bash
-ng s
-```
-- Acesse a aplicação em: http://localhost:4200
-
-## Usuários Padrão
-### Apos rodas as queries sql estaram disponiveis esses usuarios
-### Administrador
-- #### E-mail: `leila@admin.com`
-- #### Senha: `123456`
-
-### Client
-- #### E-mail: `bruno@user.com`
-- #### Senha: `123456`
