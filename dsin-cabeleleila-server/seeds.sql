@@ -1,11 +1,5 @@
 
 
-
-
-
-
-
-
 -- Inserir roles com id e created_date especificados
 INSERT INTO roles (id, created_date, name) VALUES
 ('bd2a76d3-484e-4135-b856-130b1b2092fb', CURRENT_TIMESTAMP, 'ROLE_ADMIN'),
@@ -13,8 +7,8 @@ INSERT INTO roles (id, created_date, name) VALUES
 
 -- Inserir usuários
 INSERT INTO users (id, created_date, updated_date, name, phone_number, email, password) VALUES
-('b16e7fe7-6c2f-4416-ae41-3ba3c2aea2a9',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,  'Leila Silva', '+55 11 91234-5678', 'leila@admin.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y'),
-('6c39600a-6139-4cbb-9809-9efd8b1b08f8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Bruno Dias', '+55 11 98765-4321', 'bruno@teste.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y');
+('b16e7fe7-6c2f-4416-ae41-3ba3c2aea2a9',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,  'Leila Silva', ' (14)91234-5678', 'leila@admin.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y'),
+('6c39600a-6139-4cbb-9809-9efd8b1b08f8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Bruno Dias', '(14)98765-4321', 'bruno@user.com', '$2a$10$rvJHeTJbraZ7FKeWLF3MquAGLJ3hSovrtXxhRviaHNVmsNa4tPA3y');
 
 
 -- Associar ROLE_ADMIN ao usuário 'Leila Silva'
@@ -27,7 +21,7 @@ VALUES (
 -- Associar ROLE_USER ao usuário 'Bruno Dias'
 INSERT INTO user_roles (user_id, role_id)
 VALUES (
-    (SELECT id FROM users WHERE email = 'bruno@teste.com'),
+    (SELECT id FROM users WHERE email = 'bruno@user.com'),
     (SELECT id FROM roles WHERE name = 'ROLE_USER')
 );
 
@@ -43,4 +37,10 @@ INSERT INTO services (id, created_date, name, description, price) VALUES
 (gen_random_uuid(), CURRENT_TIMESTAMP, 'Depilação', 'Depilação corporal completa.', 80.0),
 (gen_random_uuid(), CURRENT_TIMESTAMP, 'Design de Sobrancelhas', 'Design de sobrancelhas com pinça e modelagem.', 25.0),
 (gen_random_uuid(), CURRENT_TIMESTAMP, 'Maquiagem', 'Maquiagem profissional para eventos.', 120.0);
+
+
+
+
+
+
 
