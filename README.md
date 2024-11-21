@@ -85,6 +85,7 @@ ng s
   - Cadastro e autenticação de usuários.
   - Criação de novos serviços.
   - Gestão administrativa de agendamentos (confirmação, cancelamento e atualização).
+  - Performance semanal de agendamentos.
 
 ### Frontend
 - Sistema de rotas dinâmicas com Angular.
@@ -93,38 +94,4 @@ ng s
 - Manipulação e exibição de dados do calendário de agendamentos.
 - Formulários dinâmicos e validações reativas.
 
-## Endpoints e Rotas
 
-### Autenticação
-
-#### Registro de Usuário:
-- **POST** `/auth/register-user`
-
-#### Login de Usuário:
-- **POST** `/auth/login`
-
-
-### Agendamentos
-- #### Criar Agendamento:
-    **POST** `/appointment/create`
-
-- #### Atualizar Agendamento:
-    **PUT** `/appointment/update/{id}`
-
-- #### Cancelar Agendamento:
-    **PUT** `/appointment/cancel/{id}`
-
-- #### Listar Todos os Agendamentos Do Usuário:
-    **PUT** `/appointment/all`
-
-### Servços
-- #### Listar Serviços Disponíveis:
-    **GET** `/service/all`
-
-### Administração
-- #### Listar Todos Os Agendamentos:
-    **GET** `/admin/all-appointments`
-- #### Confirmar Agendamento::
-    **PUT** `/admin/confirm-appointment/{id}`
-- #### Cancelar Agendamento::
-    **PUT** `/admin/cancel-appointment/{id}`
