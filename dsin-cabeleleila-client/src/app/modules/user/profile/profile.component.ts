@@ -117,7 +117,6 @@ export class ProfileComponent implements OnInit {
     this.apiService.getDataServices().subscribe({
       next: (response) => {
         this.services = response.data;
-        console.log('Serviços', this.services);
       },
       error: (err) => console.error('Erro ao carregar serviços:', err),
     });
@@ -127,7 +126,6 @@ export class ProfileComponent implements OnInit {
     this.apiService.getAllAppointments().subscribe({
       next: (appointments) => {
         this.appointments = appointments.data;
-        console.log('Appointments', this.appointments);
       },
       error: (err) => console.error('Erro ao carregar agendamentos:', err),
     });
@@ -138,7 +136,6 @@ export class ProfileComponent implements OnInit {
   }
 
   closeModal(): void {
-    this.selectedOptions = [];
     this.isOpen = false;
   }
 
@@ -147,6 +144,7 @@ export class ProfileComponent implements OnInit {
   }
 
   closeUpdateAppointmentModal(): void {
+    this.selectedOptions = [];
     this.modalUpdateAppointmentIsOpen = false;
   }
 
@@ -190,8 +188,6 @@ export class ProfileComponent implements OnInit {
     var date = (form.elements.namedItem('date') as HTMLInputElement).value;
 
     const appointmentsInSameWeek = await this.getAppointmentsInSameWeek(date);
-
-    console.log('Agendamentos da semana', appointmentsInSameWeek);
 
     if (appointmentsInSameWeek.length > 0) {
       const firstAppointmentInSameWeek = appointmentsInSameWeek[0];
@@ -323,8 +319,6 @@ export class ProfileComponent implements OnInit {
       appointmentDate: this.newDateAppointmentUpdate,
       appointmentTime: this.newSelectedTimeAppointmentUpdate,
     };
-
-    console.log('appointment', appointment);
 
     await this.fetchWithLoading(
       () =>

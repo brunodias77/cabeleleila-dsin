@@ -42,12 +42,10 @@ export class CreateServicesAdminComponent {
 
       this.apiService.createService(request).subscribe({
         next: (response) => {
-          console.log('Serviço criado com sucesso:', response);
           alert('Serviço criado com sucesso!');
           this.createServiceForm.reset();
         },
         error: (error) => {
-          console.error('Erro ao criar o serviço:', error);
           alert('Ocorreu um erro ao tentar criar o serviço.');
         },
       });

@@ -45,7 +45,6 @@ export class WeeklyPerformanceComponent implements OnInit {
     if (this.startDate && this.endDate) {
       this.loadPerformanceData();
     } else {
-      console.log('Por favor, forneça ambas as datas');
     }
   }
 
@@ -54,9 +53,7 @@ export class WeeklyPerformanceComponent implements OnInit {
       startDate: this.startDate,
       endDate: this.endDate,
     };
-    console.log('Enviando request', request);
     this.api.getPerformaceData(request).subscribe((response) => {
-      console.log('Response', response.data);
       this.WeeklyPerformance = response.data;
     });
   }

@@ -18,8 +18,10 @@ export class AppointmentTableComponent {
   statusClasses(status: string) {
     return (
       {
-        AGENDADO:
+        CONFIRMADO:
           'text-green-600 bg-green-50 px-3 py-2 rounded-full font-semibold text-xs',
+        AGENDADO:
+          'text-yellow-600 bg-yellow-50 px-3 py-2 rounded-full font-semibold text-xs',
         CANCELADO:
           'text-red-600 bg-red-50 px-3 py-2 rounded-full font-semibold text-xs',
       }[status] || ''

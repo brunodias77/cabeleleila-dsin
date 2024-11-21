@@ -112,7 +112,6 @@ export class AppointmentsAdminComponent implements OnInit {
   private loadServices(): void {
     this.apiService.getDataServices().subscribe({
       next: (response) => {
-        console.log('Serviços carregados:', response.data);
         this.services = response.data;
       },
       error: (err) => console.error('Erro ao carregar serviços:', err),
@@ -122,7 +121,6 @@ export class AppointmentsAdminComponent implements OnInit {
   getAppointmentsAdmin(): void {
     this.apiService.getAllAppointmentsAdmin().subscribe({
       next: (response) => {
-        console.log('Agendamentos carregados:', response);
         // Acesse a propriedade 'data' da resposta corretamente
         this.appointments = response.data;
       },
@@ -218,14 +216,11 @@ export class AppointmentsAdminComponent implements OnInit {
   async handleUpdateSubmit(event: Event) {
     event.preventDefault();
     this.appointmentUpdate_serviceId = this.selectedOptions;
-    console.log(this.appointmentUpdate_serviceId);
     const appointment: RequestUpadateAppointmentAdmin = {
       serviceId: this.appointmentUpdate_serviceId,
       appointmentDate: this.appointmentUpdate_date,
       appointmentTime: this.appointmentUpdate_time,
     };
-
-    console.log('Handle Update Submiit', appointment);
 
     await this.fetchWithLoading(
       () =>
