@@ -89,7 +89,6 @@ export class ProfileComponent implements OnInit {
         const appointmentDate = new Date(appointment.appointmentDate);
         return appointmentDate >= start && appointmentDate <= end;
       });
-      console.log('filteredAppointments', this.filteredAppointments);
     }
   }
 
